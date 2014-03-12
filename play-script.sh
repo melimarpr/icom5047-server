@@ -7,13 +7,13 @@ cd /home/mmarquez/capstone/
 
 echo "==Stopping Server=="
 #Stop Server 
-./stop-aerobal.sh
+./stop-aerobal.sh 
 
 echo "==Git Pull=="
 #Pull
-git pull
+git pull 
 
 echo "==Start Server=="
 #Start Server
-./start-aerobal.sh
+./start-aerobal.sh & 
 

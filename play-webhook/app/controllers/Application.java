@@ -9,9 +9,11 @@ import java.io.InputStreamReader;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
 
+import play.libs.Json;
 import play.mvc.BodyParser;
-import play.mvc.BodyParser.Json;
+import play.mvc.BodyParser.FormUrlEncoded;
 import play.mvc.Controller;
 import play.mvc.Result;
 
@@ -23,12 +25,16 @@ public class Application extends Controller {
         return ok("Running Web Tools");
     }
     
-    @BodyParser.Of(Json.class)
+    @BodyParser.Of(FormUrlEncoded.class)
     public static Result git() throws IOException {
       //Get JSON
-      JsonNode json = request().body().asJson();
+      Map<String, String[]> payload = request().body().asFormUrlEncoded();
+      String jsonStr = payload.get("payload")[0]; 
+      
+      JsonNode json  = Json.parse(jsonStr);
+      
       //Find Value
-      String ref = json.findPath("ref").textValue();
+      String ref = json.get("ref").textValue();
       //Verify is not null
       if(ref == null) {
         return badRequest("Missing parameter [ref]");
@@ -103,3 +109,4 @@ public class Application extends Controller {
     
     
 }
+

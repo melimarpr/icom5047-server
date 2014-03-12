@@ -5,8 +5,9 @@ echo "Everything is Awesome!!!!"
 cd /home/mmarquez/capstone/
 
 #start aerobal
-./start-aerobal.sh &
+./stop-aerobal.sh 
 
-echo "==AeroBal Started=="
 #start webhook
-./start-webhook.sh &
+./stop-webhook.sh 
+
+echo "==Killing Everythin=="

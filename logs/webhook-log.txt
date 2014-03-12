@@ -1,0 +1,36 @@
+
+=====Log Date: 2014/03/12 04:27:41=====
+==Git Hook Trigger==
+==Stopping Server==
+==Stopping AeroBal==
+==AeroBal Server Stop==
+==Git Pull==
+Already up-to-date.
+==Start Server==
+
+========================================
+
+=====Log Date: 2014/03/12 04:29:32=====
+==Git Hook Trigger==
+==Stopping Server==
+==Stopping AeroBal==
+==AeroBal Server Stop==
+==Git Pull==
+Already up-to-date.
+==Start Server==
+==Starting AeroBal Server==
+
+========================================
+
+=====Log Date: 2014/03/12 04:30:35=====
+==Git Hook Trigger==
+==Stopping Server==
+==Stopping AeroBal==
+==AeroBal Server Stop==
+==Git Pull==
+Already up-to-date.
+==Start Server==
+==Starting AeroBal Server==
+[0m[[0minfo[0m] [0mLoading project definition from /home/mmarquez/capstone/aerobal-server/project[0m
+
+========================================
