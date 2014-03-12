@@ -2,9 +2,9 @@ package controllers;
 
 public class Path {
 	
-	public static String scriptPath = "/Users/enrique/Documents/temp_folder/temp/script.sh";
+	public static String scriptPath = "/home/mmarquez/capstone/play-script.sh";
 	public static String logName = "webhook-log.txt";
-	public static String logPath = "/Users/enrique/Documents/temp_folder/temp/";
+	public static String logPath = "/home/mmarquez/capstone/logs";
 	
 
 }
