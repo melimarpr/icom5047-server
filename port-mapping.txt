@@ -1,0 +1,4 @@
+Ports (Temporary until ECE Server is setup):
+
+9000 - Main Aerobal Server
+9005 - GitHub WebHook
