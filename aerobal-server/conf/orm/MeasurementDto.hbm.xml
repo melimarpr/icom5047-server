@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="com.aerobal.data.dto.MeasurementDto" schema="AeroBal" table="measurement">
+		<id name="id" type="java.lang.Long">
+			<column name="measurement_id" />
+			<generator class="increment" />
+		</id>
+		<property name="runId" type="java.lang.Long">
+			<column name="run_id" not-null="true" />
+		</property>
+		<property name="measurementTypeId" type="java.lang.Integer">
+			<column name="measurement_type_id" not-null="true" />
+		</property>
+		<property name="value" type="java.lang.Double">
+			<column name="value" not-null="true" />
+		</property>
+		<property name="timestamp" type="java.sql.Timestamp">
+			<column name="created_ts" />
+		</property>
+	</class>
+</hibernate-mapping>

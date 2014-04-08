@@ -4,6 +4,22 @@
 
 # Home page
 GET     /                           controllers.Application.index
+GET		/measurement						controllers.Application.measurement(id: Long)
+GET		/experiment						controllers.Application.experiment(id: Long)
+GET		/run						controllers.Application.run(id: Long)
+GET		/session						controllers.Application.session(id: Long)
+GET		/user						controllers.Application.user(id: Long)
+GET		/sessions					controllers.Application.sessions(userId: Long)
+GET		/experiments					controllers.Application.experiments(sessionId: Long)
+GET		/runs					controllers.Application.runs(experimentId: Long)
+GET		/measurements					controllers.Application.measurements(runId: Long)
+
+#Posts
+POST	/new_user							controllers.Application.newUser
+POST	/new_session							controllers.Application.newSession
+POST	/new_experiment							controllers.Application.newExperiment
+POST	/new_run							controllers.Application.newRun
+POST	/new_measurement							controllers.Application.newMeasurement
 
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
