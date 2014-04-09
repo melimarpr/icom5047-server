@@ -114,28 +114,5 @@ object Posts extends Controller {
 			val measurement = Gets.getMeasurement(serial.toString.toLong);
 			measurement.getOrElse(null);	
 	}
-	def updateSession(sessionId: Long, name: Option[String], desc: Option[String]): SessionDto =  {
-			val opt = Gets.getSession(sessionId);
-			val session = if(opt.isDefined) {
-				opt.get;
-			} else {
-				throw new Exception();
-			}
 
-			if(name.isDefined) {
-				session.name = name.get;
-			}
-			if(desc.isDefined) {
-				session.description =  desc.get;
-			}
-			val openSession = Application.sessionFactory.openSession();
-			openSession.beginTransaction();
-			val serial = openSession.update(session);
-			openSession.getTransaction().commit();
-			val updatedSession = Gets.getSession(serial.toString.toLong);
-			if(updatedSession.isDefined)
-				updatedSession.get;
-			else
-				throw new Exception();
-	}
 }

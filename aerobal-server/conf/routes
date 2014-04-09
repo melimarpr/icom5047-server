@@ -3,23 +3,32 @@
 # ~~~~
 
 # Home page
-GET     /                           controllers.Application.index
+GET     /                           		controllers.Application.index
 GET		/measurement						controllers.Gets.measurement(id: Long)
-GET		/experiment						controllers.Gets.experiment(id: Long)
-GET		/run						controllers.Gets.run(id: Long)
-GET		/session						controllers.Gets.session(id: Long)
-GET		/user						controllers.Gets.user(id: Long)
-GET		/sessions					controllers.Gets.sessions(userId: Long)
-GET		/experiments					controllers.Gets.experiments(sessionId: Long)
-GET		/runs					controllers.Gets.runs(experimentId: Long)
-GET		/measurements					controllers.Gets.measurements(runId: Long)
+GET		/experiment							controllers.Gets.experiment(id: Long)
+GET		/run								controllers.Gets.run(id: Long)
+GET		/session							controllers.Gets.session(id: Long)
+GET		/user								controllers.Gets.user(id: Long)
+GET		/sessions							controllers.Gets.sessions(userId: Long)
+GET		/experiments						controllers.Gets.experiments(sessionId: Long)
+GET		/runs								controllers.Gets.runs(experimentId: Long)
+GET		/measurements						controllers.Gets.measurements(runId: Long)
 
 #Posts
 POST	/new_user							controllers.Posts.newUser
-POST	/new_session							controllers.Posts.newSession
-POST	/new_experiment							controllers.Posts.newExperiment
+POST	/new_session						controllers.Posts.newSession
+POST	/new_experiment						controllers.Posts.newExperiment
 POST	/new_run							controllers.Posts.newRun
-POST	/new_measurement							controllers.Posts.newMeasurement
+POST	/new_measurement					controllers.Posts.newMeasurement
 
+#Updates
+PUT		/update_user						controllers.Puts.update_user
+PUT 	/update_experiment					controllers.Puts.update_experiment
+PUT		/update_session						controllers.Puts.update_session
+
+#Deletes
+DELETE	/delete_session						controllers.Deletes.delete_session(id: Long)
+DELETE	/delete_run							controllers.Deletes.delete_run(id: Long)
+DELETE	/delete_experiment					controllers.Deletes.delete_experiment(id: Long)
 # Map static resources from the /public folder to the /assets URL path
-GET     /assets/*file               controllers.Assets.at(path="/public", file)
+GET     /assets/*file       		        controllers.Assets.at(path="/public", file)
