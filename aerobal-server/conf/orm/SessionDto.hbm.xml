@@ -3,7 +3,7 @@
 "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-	<class name="com.aerobal.data.dto.SessionDto" schema="AeroBal" table="session">
+	<class name="com.aerobal.data.dto.SessionDto" table="session">
 		<id name="id" type="java.lang.Long">
 			<column name="session_id" />
 			<generator class="increment" />

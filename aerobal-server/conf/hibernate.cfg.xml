@@ -7,10 +7,10 @@
 		<property name="hibernate.bytecode.use_reflection_optimizer">false</property>
 		<property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
 		<property name="hibernate.connection.password">capstone2014</property>
-		<property name="hibernate.connection.url">jdbc:postgresql://107.150.13.167:5432/AeroBal</property>
+		<property name="hibernate.connection.url">jdbc:postgresql://107.150.13.167:5432/aerobal</property>
 		<property name="hibernate.connection.username">postgres</property>
 		<property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
-		<property name="hibernate.default_schema">AeroBal</property>
+		<property name="hibernate.default_schema">aerobal</property>
 		<property name="hibernate.show_sql">true</property>
 		<property name="hibernate.format_sql">true</property>
 		<property name="hibernate.use_sql_comments">false</property>

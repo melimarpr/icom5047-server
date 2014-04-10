@@ -11,21 +11,25 @@ import org.hibernate.boot.registry.StandardServiceRegistryBuilder
 
 object Application extends Controller {
 	//  val sf = JPA.em().getDelegate().asInstanceOf[Session].Gets.getSessionFactory();
-
-	val configuration = new Configuration().configure();
-	val serviceRegistry = new StandardServiceRegistryBuilder().applySettings(
-			configuration.getProperties()).build();
-	val sessionFactory = { println("Starting to Build Session Factory"); 
-	//	val tbr = new Configuration().configure().buildSessionFactory();
-	val tbr = configuration.buildSessionFactory(serviceRegistry);
-	println("Finished building session Factory");
-	tbr }
+	var configFile = "hibernate.cfg.xml";
+	lazy val sessionFactory = { 
+			val configuration = new Configuration().configure(configFile);
+			val serviceRegistry = new StandardServiceRegistryBuilder().applySettings(
+					configuration.getProperties()).build();
+			println("Starting to Build Session Factory"); 
+			val tbr = configuration.buildSessionFactory(serviceRegistry);
+			println("Finished building session Factory");
+			tbr 
+	}
 
 	def index = Action {
-
+		
 		Ok(views.html.index("Aloha!"));
 	}
-	
+	def setTestConfigFile() {
+	  configFile = "hibernatetest.cfg.xml";
+	  sessionFactory.toString();
+	}
 
 
 }
