@@ -55,9 +55,10 @@ object Posts extends Controller {
 			val userDto = new UserDto();
 			userDto.setUsername(username);
 			userDto.setName(name);
-			userDto.setSalt("someSalt");
+			userDto.setSalt(Application.generateSaltString);
 			userDto.setPassword(password);
 			userDto.setEmail(email);
+			userDto.setToken(Application.generateTokenString);
 			val openSession = Application.sessionFactory.openSession();
 			openSession.beginTransaction();
 			val serial = openSession.save(userDto);
