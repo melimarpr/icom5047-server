@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="com.aerobal.data.dto.UserDto" table="USER" dynamic-insert="false">
+		<id name="id" type="java.lang.Long">
+			<column name="USER_ID" />
+			<generator class="increment" />
+		</id>
+		<property name="name" type="string">
+			<column name="NAME" not-null="true" />
+		</property>
+		<property name="username" type="string">
+			<column name="USERNAME" not-null="true" />
+		</property>
+		<property name="email" type="string">
+			<column name="EMAIL" not-null="true" />
+		</property>
+		<property name="password" type="string">
+			<column name="PASSWORD" not-null="true" />
+		</property>
+		<property name="salt" type="string">
+			<column name="SALT" not-null="true" />
+		</property>
+		<property name="token" type="string">
+			<column name="TOKEN" not-null="true"/>
+		</property>
+		<property name="isActive" type="java.lang.Boolean">
+			<column name="IS_ACTIVE"/>
+		</property>
+	</class>
+</hibernate-mapping>

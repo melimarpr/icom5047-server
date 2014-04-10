@@ -1,0 +1,31 @@
+<dataset>
+    <USER USER_ID="1" 
+                USERNAME="atestusername"
+                password="anonhashedpassword"
+                salt="notarealsalt"
+                name="thisisatestname"
+                token="atestableandunrealtoken"
+                email="fake@testmail.org"
+                is_active="true"
+                /> 
+	<SESSION session_id="1"
+    			user_id="1"
+    			name="testingSession"
+    			is_public="true"
+    			is_active="true"
+    			description="A description for testing." />
+	 <EXPERIMENT experiment_id="1"
+                session_id="1"
+                name="experimentname"
+                amount_of_samples="4"
+                frequency="7"
+                wind_speed="34.5"
+                is_active="true" />
+	 <RUN run_id="1"
+	     		experiment_id="1"
+	     		is_active="true" />
+	 <MEASUREMENT measurement_id="1"
+                run_id="1"
+                measurement_type_id="1"
+                value="1234.5" />
+</dataset>

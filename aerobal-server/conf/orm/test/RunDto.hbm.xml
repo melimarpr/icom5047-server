@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="com.aerobal.data.dto.RunDto" table="RUN">
+		<id name="id" type="java.lang.Long">
+			<column name="RUN_ID" />
+			<generator class="increment" />
+		</id>
+		<property name="experimentId" type="java.lang.Long">
+			<column name="EXPERIMENT_ID" not-null="true" />
+		</property>
+		<property name="timestamp" type="java.sql.Timestamp">
+			<column name="CREATED_TS" />
+		</property>
+				<property name="isActive" type="java.lang.Boolean">
+			<column name="IS_ACTIVE"/>
+		</property>
+	</class>
+</hibernate-mapping>

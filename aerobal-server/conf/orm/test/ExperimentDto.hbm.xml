@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
+"http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+
+<hibernate-mapping>
+	<class name="com.aerobal.data.dto.ExperimentDto" 
+		table="EXPERIMENT">
+		<id name="id" type="java.lang.Long">
+			<column name="EXPERIMENT_ID" />
+			<generator class="increment" />
+		</id>
+		<property name="sessionId" type="java.lang.Long">
+			<column name="SESSION_ID" not-null="true" />
+		</property>
+		<property name="name" type="string">
+			<column name="NAME" not-null="true" />
+		</property>
+		<property name="amountOfValues" type="java.lang.Integer">
+			<column name="AMOUNT_OF_SAMPLES" not-null="true" />
+		</property>
+		<property name="frequency" type="java.lang.Integer">
+			<column name="FREQUENCY" not-null="true" />
+		</property>
+		<property name="windSpeed" type="java.lang.Double">
+			<column name="WIND_SPEED" not-null="true" />
+		</property>
+		<property name="timestamp" type="java.sql.Timestamp">
+			<column name="CREATED_TS" />
+		</property>
+		<property name="isActive" type="java.lang.Boolean">
+			<column name="IS_ACTIVE" />
+		</property>
+	</class>
+</hibernate-mapping>
