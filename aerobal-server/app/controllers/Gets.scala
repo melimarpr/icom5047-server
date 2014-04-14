@@ -101,7 +101,7 @@ object Gets extends Controller {
 	}
 	def getExperiment(experimentId: Long): Option[ExperimentDto] = {
 			val session = Application.sessionFactory.openSession();
-			val hql = "FROM ExperimentDto E WHERE E.id = :experimentId";
+			val hql = "FROM ExperimentDto E WHERE E.id = :experimentId AND E.isActive = true";
 			val query = session.createQuery(hql);
 			query.setLong("experimentId", experimentId);
 			val listResults = query.list();
@@ -116,7 +116,7 @@ object Gets extends Controller {
 
 	def getMeasurement(measurementId: Long): Option[MeasurementDto] = {
 			val session = Application.sessionFactory.openSession();
-			val hql = "FROM MeasurementDto M WHERE M.id = :measurementId";
+			val hql = "FROM MeasurementDto M WHERE M.id = :measurementId AND M.isActive = true";
 			val query = session.createQuery(hql);
 			query.setLong("measurementId", measurementId);
 			val listResults = query.list();
@@ -130,7 +130,7 @@ object Gets extends Controller {
 	}
 	def getRun(runId: Long): Option[RunDto] = {
 			val session = Application.sessionFactory.openSession();
-			val hql = "FROM RunDto R WHERE R.id = :runId";
+			val hql = "FROM RunDto R WHERE R.id = :runId AND R.isActive = true";
 			val query = session.createQuery(hql);
 			query.setLong("runId", runId);
 			val listResults = query.list();
@@ -144,7 +144,7 @@ object Gets extends Controller {
 	}
 	def getSession(sessionId: Long): Option[SessionDto] = {
 			val session = Application.sessionFactory.openSession();
-			val hql = "FROM SessionDto S WHERE S.id = :sessionId";
+			val hql = "FROM SessionDto S WHERE S.id = :sessionId AND S.isActive = true";
 			val query = session.createQuery(hql);
 			query.setLong("sessionId", sessionId);
 			val listResults = query.list();
@@ -158,7 +158,7 @@ object Gets extends Controller {
 	}
 	def getUser(userId: Long): Option[UserDto] = {
 			val session = Application.sessionFactory.openSession();
-			val hql = "FROM UserDto U WHERE U.id = :userId";
+			val hql = "FROM UserDto U WHERE U.id = :userId AND U.isActive = true";
 			val query = session.createQuery(hql);
 			query.setLong("userId", userId);
 			val listResults = query.list();
@@ -172,7 +172,7 @@ object Gets extends Controller {
 	}
 	def getSessions(userId: Long): List[SessionDto] = {
 			val sessions = Application.sessionFactory.openSession();
-			val hql = "FROM SessionDto S WHERE S.userId = :userId";
+			val hql = "FROM SessionDto S WHERE S.userId = :userId AND S.isActive = true";
 			val query = sessions.createQuery(hql);
 			query.setLong("userId", userId);
 			val listResults = query.list();
@@ -184,7 +184,7 @@ object Gets extends Controller {
 
 	def getExperiments(sessionId: Long): List[ExperimentDto] = {
 			val experiments = Application.sessionFactory.openSession();
-			val hql = "FROM ExperimentDto E WHERE E.sessionId = :sessionId";
+			val hql = "FROM ExperimentDto E WHERE E.sessionId = :sessionId AND E.isActive = true";
 			val query = experiments.createQuery(hql);
 			query.setLong("sessionId", sessionId);
 			val listResults = query.list();
@@ -195,7 +195,7 @@ object Gets extends Controller {
 	}
 	def getRuns(experimentId: Long): List[RunDto] = {
 			val runs = Application.sessionFactory.openSession();
-			val hql = "FROM RunDto R WHERE R.experimentId = :experimentId";
+			val hql = "FROM RunDto R WHERE R.experimentId = :experimentId  AND M.isActive = true";
 			val query = runs.createQuery(hql);
 			query.setLong("experimentId", experimentId);
 			val listResults = query.list();
@@ -206,7 +206,7 @@ object Gets extends Controller {
 	}
 	def getMeasurements(runId: Long): List[MeasurementDto] = {
 			val measurements = Application.sessionFactory.openSession();
-			val hql = "FROM MeasurementDto M WHERE M.runId = :runId";
+			val hql = "FROM MeasurementDto M WHERE M.runId = :runId AND M.isActive = true";
 			val query = measurements.createQuery(hql);
 			query.setLong("runId", runId);
 			val listResults = query.list();

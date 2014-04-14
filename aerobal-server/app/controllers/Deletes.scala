@@ -15,30 +15,60 @@ object Deletes extends Controller {
 		Ok(deleteExperiment(experimentId).toString);
 	}
 	def deleteSession(sessionId: Long): Boolean = {
-			val openSession = Application.sessionFactory.openSession();
-			val hql = "DELETE FROM SessionDto S WHERE S.id = :sessionId";
-			val query = openSession.createQuery(hql);
-			query.setLong("sessionId", sessionId);
-			val results = query.executeUpdate();
-			openSession.close();
-			results > 0
+			val sessionOpt = Gets.getSession(sessionId);
+			if(sessionOpt.isDefined) {
+				val session = sessionOpt.get;
+				if(session.isActive) {
+					val openSession = Application.sessionFactory.openSession();
+					openSession.beginTransaction();
+					session.isActive = false;
+					openSession.update(session);
+					openSession.getTransaction().commit();					
+					true;
+				} else {
+					false;
+				}
+			}
+			else {
+				false;
+			}
 	}
 	def deleteRun(runId: Long): Boolean = {
-			val openSession = Application.sessionFactory.openSession();
-			val hql = "DELETE FROM RunDto R WHERE R.id = :runId";
-			val query = openSession.createQuery(hql);
-			query.setLong("runId", runId);
-			val results = query.executeUpdate();
-			openSession.close();
-			results > 0
+			val runOpt = Gets.getRun(runId);
+			if(runOpt.isDefined) {
+				val run = runOpt.get;
+				if(run.isActive) {
+					val openSession = Application.sessionFactory.openSession();
+					openSession.beginTransaction();
+					run.isActive = false;
+					openSession.update(run);
+					openSession.getTransaction().commit();
+					true;
+				} else {
+					false;
+				}
+			}
+			else {
+				false;
+			}
 	}
 	def deleteExperiment(experimentId: Long): Boolean = {
-			val openSession = Application.sessionFactory.openSession();
-			val hql = "DELETE FROM ExperimentDto E WHERE E.id = :experimentId";
-			val query = openSession.createQuery(hql);
-			query.setLong("experimentId", experimentId);
-			val results = query.executeUpdate();
-			openSession.close();
-			results > 0
+			val experimentOpt = Gets.getExperiment(experimentId);
+			if(experimentOpt.isDefined) {
+				val experiment = experimentOpt.get;
+				if(experiment.isActive) {
+					val openSession = Application.sessionFactory.openSession();
+					openSession.beginTransaction();
+					experiment.isActive = false;
+					openSession.update(experiment);
+					openSession.getTransaction().commit();
+					true;
+				} else {
+					false;
+				}
+			}
+			else {
+				false;
+			}
 	}
 }

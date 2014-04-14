@@ -13,23 +13,38 @@ object Puts extends Controller {
 	def update_experiment = Action { request =>
 	val values = request.body.asFormUrlEncoded.get;
 	val experimentId = values.get("experimentId").get(0).toLong;
-	val name = values.get("name").get(0).toString;
+	val nameOpt = values.get("name");
+	val name = if(nameOpt.isDefined) {
+	  nameOpt.get(0).toString;
+	} else null;
 	val experiment = updateExperiment(experimentId, Some(name));
 	Ok(experiment.toString);
 	}
 	def update_session = Action { request => 
 	val values = request.body.asFormUrlEncoded.get;
 	val sessionId = values.get("sessionId").get(0).toLong;
-	val name = values.get("name").get(0).toString;
-	val description = values.get("desc").get(0).toString;
+	val nameOpt = values.get("name");
+	val name = if(nameOpt.isDefined) {
+	  nameOpt.get(0).toString;
+	} else null;
+	val descriptionOpt = values.get("desc");
+	val description = if(descriptionOpt.isDefined) {
+	  descriptionOpt.get(0).toString;
+	} else null;
 	val session = updateSession(sessionId, Some(name), Some(description));
 	Ok(session.toString);
 	}
 	def update_user = Action { request =>
 	val values = request.body.asFormUrlEncoded.get;
 	val userId = values.get("userId").get(0).toLong;
-	val name = values.get("name").get(0).toString;
-	val email = values.get("email").get(0).toString;
+	val nameOpt = values.get("name");
+	val name = if(nameOpt.isDefined) {
+	  nameOpt.get(0).toString;
+	} else null;
+	val emailOpt = values.get("email");
+	val email = if(emailOpt.isDefined) {
+	  emailOpt.get(0).toString;
+	} else null;
 	val experiment = updateUser(userId, Some(name), Some(email));
 	Ok(experiment.toString);
 	}
