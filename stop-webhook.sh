@@ -2,7 +2,7 @@
 
 echo "==Stopping Webhook=="
 
-cd /home/mmarquez/capstone/play-webhook/target/universal/stage/
+cd /home/aerobal/capstone/icom5047-server/play-webhook/target/universal/stage/
 
 #Killing Pid
 

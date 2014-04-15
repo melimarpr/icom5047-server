@@ -2,7 +2,7 @@
 
 echo "==Stopping AeroBal=="
 
-cd /home/mmarquez/capstone/aerobal-server/target/universal/stage/
+cd /home/aerobal/capstone/icom5047-server/aerobal-server/target/universal/stage/
 
 #Killing Pid
 

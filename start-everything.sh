@@ -2,7 +2,7 @@
 
 #Cd to folder
 echo "Everything is Awesome!!!!"
-cd /home/mmarquez/capstone/
+cd /home/aerobal/capstone/icom5047-server
 
 #start aerobal
 ./start-aerobal.sh &
