@@ -14,6 +14,11 @@ html#login{
 
 }
 
+#main-panel.pure-g-r {
+    display: inline;
+}
+
+
 /* Login-Header */
 .login-header{
  font-family:Helvetica;
@@ -36,6 +41,8 @@ html#login{
 .login-box{
     background-color: rgb(250, 250, 250);
     box-shadow: 3px 3px 0px #333333;
+    height:auto;
+
     /*filter:alpha(opacity=90);
     opacity:0.90; */
 }
@@ -59,6 +66,16 @@ html#login{
      width: 50%;
 }
 
+
+a.flat-btn:hover{
+
+    background-color: #7a8d7a;
+    filter:alpha(opacity=80);
+    opacity:0.80;
+
+}
+
+
 a.btn-size-item {
         display: block;
         color: #fff;
@@ -76,12 +93,75 @@ a.btn-size-item {
 
 }
 
+.btn-back{
+    display: inline;
+    max-width: 50%;
+    max-height:50%;
+    margin-left:10px;
+
+}
+
+.btn-sign-in{
+    background-color: #68ba68;
+    margin-top: 15px;
+    margin-bottom: 15px;
+
+}
+
+a#btn-forgot{
+    margin-left:10px;
+    text-family: Helvetica;
+    font-size: 1em;
+    text-decoration: none;
+
+
+}
+
+.registration-successful{
+
+   font-size:1.25em;
+}
+
+#limit { position: relative; overflow: hidden; }
+
+/* Main Elements */
+
+html {
+    text-family: Helvetica;
+
+}
+
+
+.input-box {
+    margin: 25px;
+}
+
+
+/* General Link Elements */
+a:link {
+    color: #000000;
+    text-decoration:none;
+}
+a:visited {
+    color: #000000;
+    text-decoration:none;
+}
+a:hover {
+    color: #676767;
+    text-decoration:none;
+}
+a:active {
+    color: #000000;
+    text-decoration:none;
+}
+
 
 /* Helper Class */
 .center {
-    bottom: 0; left: 0; top: 0; right: 0;
+    bottom: 25%; left: 0; top: 0; right: 0;
     margin: auto;
     position: absolute;
     width: 100%;
     height: 25%;
 }
+
