@@ -5,7 +5,7 @@
 #Website
 GET     /                           		controllers.Website.index
 GET     /login                              controllers.Website.login
-GET     /main                               controllers.Website.panel
+GET     /panel                              controllers.Website.panel
 
 # GET
 GET		/measurement						controllers.Gets.measurement(id: Long)
