@@ -13,6 +13,7 @@ GET		/sessions							controllers.Gets.sessions(userId: Long)
 GET		/experiments						controllers.Gets.experiments(sessionId: Long)
 GET		/runs								controllers.Gets.runs(experimentId: Long)
 GET		/measurements						controllers.Gets.measurements(runId: Long)
+#GET		/users								controllers.Gets.users
 
 #Posts
 POST	/new_user							controllers.Posts.newUser
@@ -30,5 +31,7 @@ PUT		/update_session						controllers.Puts.update_session
 DELETE	/delete_session						controllers.Deletes.delete_session(id: Long)
 DELETE	/delete_run							controllers.Deletes.delete_run(id: Long)
 DELETE	/delete_experiment					controllers.Deletes.delete_experiment(id: Long)
+#DELETE	/delete_experiments					controllers.Deletes.delete_experiments(sessionId: Long)
+#DELETE	/delete_measurement					controllers.Deletes.delete_measurement(id: Long)
 # Map static resources from the /public folder to the /assets URL path
 GET     /assets/*file       		        controllers.Assets.at(path="/public", file)

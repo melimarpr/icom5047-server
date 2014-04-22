@@ -13,9 +13,9 @@ object Gets extends Controller {
 	def measurement(id: Long) = Action {
 		val measurement = getMeasurement(id);
 		if(measurement.isDefined) {
-			NotFound("Id=" + id + " not found.");
+			Ok(measurement.get.toString);			
 		} else {
-			Ok(measurement.get.toString);
+			NotFound("Id=" + id + " not found.");
 		}
 
 	}
@@ -195,7 +195,7 @@ object Gets extends Controller {
 	}
 	def getRuns(experimentId: Long): List[RunDto] = {
 			val runs = Application.sessionFactory.openSession();
-			val hql = "FROM RunDto R WHERE R.experimentId = :experimentId  AND M.isActive = true";
+			val hql = "FROM RunDto R WHERE R.experimentId = :experimentId  AND R.isActive = true";
 			val query = runs.createQuery(hql);
 			query.setLong("experimentId", experimentId);
 			val listResults = query.list();
@@ -214,5 +214,17 @@ object Gets extends Controller {
 			val tbrList = new ListBuffer[MeasurementDto]();
 			listResults.foreach(x => tbrList.add(x.asInstanceOf[MeasurementDto]));
 			tbrList.toList;
+	}
+	def getUserByUsernameOrEmail(user: String): Option[UserDto] = {
+	  val session = Application.sessionFactory.openSession();
+	  val hql = "FROM UserDto U WHERE U.username = :user OR U.email = :user";
+	  val query = session.createQuery(hql);
+	  query.setString("user", user.trim());
+	  val results = query.list();
+	  if(results.isEmpty()) {
+	    None
+	  } else {
+	    Some(results(0).asInstanceOf[UserDto]);
+	  }
 	}
 }

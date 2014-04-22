@@ -17,11 +17,8 @@
 		<property name="email" type="string">
 			<column name="email" not-null="true" />
 		</property>
-		<property name="password" type="string">
-			<column name="password" not-null="true" />
-		</property>
-		<property name="salt" type="string">
-			<column name="salt" not-null="true" />
+		<property name="hash" type="string">
+			<column name="hash" not-null="true" />
 		</property>
 		<property name="token" type="string">
 			<column name="token" not-null="true"/>

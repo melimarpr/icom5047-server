@@ -1,10 +1,13 @@
 package controllers
 
-import com.aerobal.data.dto._
-import scala.collection.mutable.ListBuffer
+import com.aerobal.data.dto.ExperimentDto
+import com.aerobal.data.dto.MeasurementDto
+import com.aerobal.data.dto.RunDto
+import com.aerobal.data.dto.SessionDto
+import com.aerobal.data.dto.UserDto
 import play.api.mvc.Action
 import play.api.mvc.Controller
-import com.google.gson.Gson
+import cryptography.PasswordHash
 
 object Posts extends Controller {
 
@@ -18,12 +21,12 @@ object Posts extends Controller {
 	Ok(user.toString);
 	}
 	def newSession = Action { request => 
-	val values = request.body.asFormUrlEncoded.get;
+	val values = request.body.asFormUrlEncoded.getOrElse(null);
 	val userId = values.get("userId").get(0).toLong;
 	val name = values.get("name").get(0);
 	val desc = values.get("desc").get(0);
-	val isPublic = values.get("isPublic").get(0).toBoolean;
-	val session = addSession(userId, name, desc,isPublic);
+	val isPublic = values.get("isPublic").getOrElse(List("false"))(0).toString().toBoolean;;
+	val session = addSession(userId, name, desc, isPublic);
 	Ok(session.toString);
 	}
 	def newRun = Action { request => 
@@ -55,8 +58,7 @@ object Posts extends Controller {
 			val userDto = new UserDto();
 			userDto.setUsername(username);
 			userDto.setName(name);
-			userDto.setSalt(Application.generateSaltString);
-			userDto.setPassword(password);
+			userDto.setHash(PasswordHash.createHash(password));
 			userDto.setEmail(email);
 			userDto.setToken(Application.generateTokenString);
 			val openSession = Application.sessionFactory.openSession();
@@ -114,6 +116,19 @@ object Posts extends Controller {
 			openSession.getTransaction().commit();
 			val measurement = Gets.getMeasurement(serial.toString.toLong);
 			measurement.getOrElse(null);	
+	}
+	def authenticate(user: String, password: String): String = {
+	  val userOpt = Gets.getUserByUsernameOrEmail(user);
+	  if(userOpt.isDefined) {
+	    val user = userOpt.get;
+	    if(PasswordHash.validatePassword(password, user.getHash)) {
+	      user.token;
+	    } else {}
+	    "INCORRECTPASSWORD";
+	  }
+	  else {
+	    "NOTFOUND"
+	  }
 	}
 
 }
