@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html id="login">
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <title>AeroBal - UPRM Wind Tunnel System</title>
+
+    <!-- Add CSS -->
+
+    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.4.2/pure-min.css">
+    <link rel="stylesheet" href="assets/css/aerobal.css" />
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+    <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+
+</head>
+<body>
+<div  id="main-panel" class="pure-g-r center">
+    <div class="pure-u-1-5">
+
+    </div>
+
+    <div  class="pure-u-3-5 login-box">
+        <div style="margin:25px;">
+            <span class="login-header"><span class="aero">Aero</span><span class="bal">Bal</span></span>
+            <br />
+            <span id="subheader" class="login-header">UPRM Wind Tunnel System</span>
+            <br />
+        </div>
+        <div id="container">
+            <!-- Main Div -->
+            <div id="main-cont" class="btn-grid pure-g" style="display:inline;">
+                <div class="btn-login pure-u">
+                    <a id="btn-login" class="btn-size-item flat-btn" href="#">
+                      <span>Log-In</span>
+                    </a>
+                </div>
+                <div class="btn-register pure-u">
+                    <a id="btn-register" class="btn-size-item flat-btn" href="#">
+                        <span>Register</span>
+                    </a>
+                </div>
+
+            </div>
+
+            <!-- Register Div -->
+            <div id="login-cont" style="display:none; ">
+                <div class="pure-g">
+                    <div class="pure-u-1-5">
+                        <a href="#" class="btn-back"><img src="assets/img/backbtn.png" /></a>
+                    </div>
+                    <div class="pure-u-4-5" >
+                        <input type="email" placeholder="Email">
+                        <input class="input=box" type="password" placeholder="Password">
+                        <br />
+
+                        <button type="submit" class="pure-button btn-sign-in">Sign in</button>
+                        <a id="btn-forgot" href="#" >Forgot Password</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Forgot Div -->
+            <div id="forgot-cont" style="display:none;">
+                <div class="pure-g">
+                    <div class="pure-u-1-5">
+                        <a href="#" class="btn-back"><img src="assets/img/backbtn.png" /></a>
+                    </div>
+                    <div class="pure-u-4-5" >
+                        <input type="email" placeholder="Email" style="width:75%;">
+                        <br />
+                        <button type="submit" class="pure-button btn-sign-in">Send</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Register Div -->
+            <div id="register-cont" style="display:none;">
+                <div class="pure-g">
+                    <div class="pure-u-1-5">
+                        <a href="#" class="btn-back"><img src="assets/img/backbtn.png" /></a>
+                    </div>
+                    <div class="pure-u-4-5" >
+                        <form class="pure-form pure-form-aligned">
+                            <fieldset>
+                                <div class="pure-control-group">
+                                    <label for="name">Username</label>
+                                    <input id="name" type="text" placeholder="Username">
+                                </div>
+
+                                <div class="pure-control-group">
+                                    <label for="password">Password</label>
+                                    <input id="password" type="password" placeholder="Password">
+                                </div>
+                                <div class="pure-control-group">
+                                    <label for="password">Confirm Password</label>
+                                    <input id="confirm-password" type="password" placeholder="Password">
+                                </div>
+
+                                <div class="pure-control-group">
+                                    <label for="email">Email Address</label>
+                                    <input id="email" type="email" placeholder="Email Address">
+                                </div>
+
+                                <div class="pure-control-group">
+                                    <label for="foo">Institution</label>
+                                    <input id="foo" type="text" placeholder="Institution">
+                                </div>
+
+                                <div class="pure-controls">
+                                    <label for="cb" class="pure-checkbox">
+                                        <input id="cb" type="checkbox"> I've read the terms and conditions
+                                    </label>
+
+                                    <button id="btn-complete-register" type="submit" class="pure-button btn-sign-in">Submit</button>
+                                </div>
+                            </fieldset>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Complete Div -->
+            <div id="complete-cont" style="display:none;">
+                <div class="pure-g">
+                    <div class="pure-u-1-5">
+                        <a href="#" class="btn-back"><img src="assets/img/backbtn.png" /></a>
+                    </div>
+                    <div class="pure-u-4-5"  >
+                        <span class="registration-successful">Congrats. An email has been send to confirm registration.</span>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    <div class="pure-u-1-5">
+    </div>
+    </div>
+
+
+
+</div>
+
+<!-- JS -->
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="assets/js/login.js"></script>
+</body>
+</html>

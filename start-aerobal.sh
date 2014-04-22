@@ -2,11 +2,11 @@
 
 echo "==Starting AeroBal Server=="
 
-cd /home/mmarquez/capstone/aerobal-server/
+cd /home/aerobal/capstone/icom5047-server/aerobal-server/
 
 play stage
 
-cd /home/mmarquez/capstone/aerobal-server/target/universal/stage/bin/
+cd /home/aerobal/capstone/icom5047-server/aerobal-server/target/universal/stage/bin/
 
 #Run Command
 ./aerobal-server -Dhttp.port=9000

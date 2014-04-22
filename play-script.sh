@@ -3,7 +3,7 @@
 echo "==Git Hook Trigger=="
 
 #Cd to Folder Aerobal
-cd /home/mmarquez/capstone/
+cd /home/aerobal/capstone/icom5047-server
 
 echo "==Stopping Server=="
 #Stop Server 

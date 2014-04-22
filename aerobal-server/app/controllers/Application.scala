@@ -24,11 +24,7 @@ object Application extends Controller {
 			println("Finished building session Factory");
 			tbr 
 	}
-	
-	def index = Action {
-		
-		Ok(views.html.index("Aloha!"));
-	}
+
 	def setTestConfigFile() {
 	  configFile = "hibernatetest.cfg.xml";
 	  sessionFactory.toString();

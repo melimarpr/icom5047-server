@@ -2,8 +2,17 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-# Home page
-GET     /                           		controllers.Application.index
+#Website
+GET     /                           		controllers.Website.index
+GET     /login                              controllers.Website.login
+GET     /panel                              controllers.Website.panel
+GET     /settings                           controllers.Website.settings
+GET     /main                               controllers.Website.main
+GET     /my_sessions                        controllers.Website.sessions
+GET     /browse                             controllers.Website.browse
+
+
+# GET
 GET		/measurement						controllers.Gets.measurement(id: Long)
 GET		/experiment							controllers.Gets.experiment(id: Long)
 GET		/run								controllers.Gets.run(id: Long)
