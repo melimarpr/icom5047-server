@@ -7,7 +7,7 @@
 		<property name="hibernate.bytecode.use_reflection_optimizer">false</property>
 		<property name="hibernate.connection.driver_class">org.postgresql.Driver</property>
 		<property name="hibernate.connection.password">capstone2014</property>
-		<property name="hibernate.connection.url">jdbc:postgresql://107.150.13.167:5432/aerobal</property>
+		<property name="hibernate.connection.url">jdbc:postgresql://162.243.4.162:5432/aerobal</property>
 		<property name="hibernate.connection.username">postgres</property>
 		<property name="hibernate.dialect">org.hibernate.dialect.PostgreSQLDialect</property>
 		<property name="hibernate.default_schema">aerobal</property>
@@ -17,10 +17,10 @@
 		<property name="hibernate.globally_quoted_identifiers">true</property>
 		<property name="hibernate.temp.use_jdbc_metadata_defaults">false</property>
 		<property name="hibernate.hbm2ddl.auto">validate</property>
-		<mapping resource="orm/MeasurementDto.hbm.xml"></mapping>
 		<mapping resource="orm/ExperimentDto.hbm.xml"></mapping>
 		<mapping resource="orm/RunDto.hbm.xml"></mapping>
 		<mapping resource="orm/SessionDto.hbm.xml"></mapping>
+		<mapping resource="orm/MeasurementDto.hbm.xml"></mapping>
 		<mapping resource="orm/UserDto.hbm.xml"></mapping>
 	</session-factory>
 </hibernate-configuration>

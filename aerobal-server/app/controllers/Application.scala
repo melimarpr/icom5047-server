@@ -25,8 +25,6 @@ object Application extends Controller {
 			tbr 
 	}
 
-
-
 	def setTestConfigFile() {
 	  configFile = "hibernatetest.cfg.xml";
 	  sessionFactory.toString();
