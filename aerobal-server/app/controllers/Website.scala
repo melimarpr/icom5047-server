@@ -15,12 +15,28 @@ object Website extends Controller{
   }
 
   def login = Action {
-    Ok(views.html.login());
+    Ok(views.html.login())
   }
 
   def panel = Action {
 
-    Ok(views.html.panel());
+    Ok(views.html.panel())
+  }
+
+  def settings = Action {
+    Ok(views.html.settings())
+  }
+
+  def browse = Action {
+    Ok(views.html.browse())
+  }
+
+  def sessions = Action{
+    Ok(views.html.mysessions())
+  }
+
+  def main = Action{
+    Ok(views.html.main())
   }
 
 
