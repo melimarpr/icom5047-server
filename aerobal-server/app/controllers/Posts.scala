@@ -53,7 +53,13 @@ object Posts extends Controller {
 	val experiment = addMeasurement(runId, typeOf, value);
 	Ok(experiment.toString);
 	}
-
+	def auth = Action {
+	  request => val values = request.body.asFormUrlEncoded.get;
+	  val user = values.get("user").get(0);
+	  val password = values.get("password").get(0);
+	  val auth = authenticate(user, password)
+	  Ok(auth);
+	}
 	def addUser(username: String, name: String, password: String, email: String): UserDto = {
 			val userDto = new UserDto();
 			userDto.setUsername(username);

@@ -30,6 +30,7 @@ POST	/new_session						controllers.Posts.newSession
 POST	/new_experiment						controllers.Posts.newExperiment
 POST	/new_run							controllers.Posts.newRun
 POST	/new_measurement					controllers.Posts.newMeasurement
+POST	/auth								controllers.Posts.auth
 
 #Updates
 PUT		/update_user						controllers.Puts.update_user
