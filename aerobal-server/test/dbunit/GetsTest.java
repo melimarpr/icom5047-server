@@ -42,7 +42,6 @@ public class GetsTest extends TestCase {
 	public void testGetUser() {
 		UserDto user = Gets.getUser(1).get();
 		assertEquals(1, user.getId());
-		assertEquals("atestusername", user.getUsername());
 		assertEquals("thisisatestname", user.getName());
 		assertEquals("atestableandunrealtoken",user.getToken());
 		assertEquals("fake@testmail.org",user.getEmail());

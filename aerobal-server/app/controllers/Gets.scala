@@ -9,7 +9,7 @@ import play.api.mvc.Controller
 import com.google.gson.Gson
 
 object Gets extends Controller {
-  
+
 	def measurement(id: Long) = Action {
 		val measurement = getMeasurement(id);
 		if(measurement.isDefined) {
@@ -99,6 +99,16 @@ object Gets extends Controller {
 			NotFound("Id=" + runId + " not found.");
 		} 
 	}
+	def users = Action {
+		val users = getUsers;
+		if(!users.isEmpty) {
+			Ok(new Gson().toJson(users.toArray)).as("application/json");
+		} 
+		else
+		{
+			NotFound("No users found.");
+		} 
+	}
 	def getExperiment(experimentId: Long): Option[ExperimentDto] = {
 			val session = Application.sessionFactory.openSession();
 			val hql = "FROM ExperimentDto E WHERE E.id = :experimentId AND E.isActive = true";
@@ -171,60 +181,70 @@ object Gets extends Controller {
 			}
 	}
 	def getSessions(userId: Long): List[SessionDto] = {
-			val sessions = Application.sessionFactory.openSession();
+			val session = Application.sessionFactory.openSession();
 			val hql = "FROM SessionDto S WHERE S.userId = :userId AND S.isActive = true";
-			val query = sessions.createQuery(hql);
+			val query = session.createQuery(hql);
 			query.setLong("userId", userId);
 			val listResults = query.list();
-			sessions.close();
+			session.close();
 			val tbrList = new ListBuffer[SessionDto]();
 			listResults.foreach(x => tbrList.add(x.asInstanceOf[SessionDto]));
 			tbrList.toList;
 	}
 
 	def getExperiments(sessionId: Long): List[ExperimentDto] = {
-			val experiments = Application.sessionFactory.openSession();
+			val session = Application.sessionFactory.openSession();
 			val hql = "FROM ExperimentDto E WHERE E.sessionId = :sessionId AND E.isActive = true";
-			val query = experiments.createQuery(hql);
+			val query = session.createQuery(hql);
 			query.setLong("sessionId", sessionId);
 			val listResults = query.list();
-			experiments.close();
+			session.close();
 			val tbrList = new ListBuffer[ExperimentDto]();
 			listResults.foreach(x => tbrList.add(x.asInstanceOf[ExperimentDto]));
 			tbrList.toList;
 	}
 	def getRuns(experimentId: Long): List[RunDto] = {
-			val runs = Application.sessionFactory.openSession();
+			val session = Application.sessionFactory.openSession();
 			val hql = "FROM RunDto R WHERE R.experimentId = :experimentId  AND R.isActive = true";
-			val query = runs.createQuery(hql);
+			val query = session.createQuery(hql);
 			query.setLong("experimentId", experimentId);
 			val listResults = query.list();
-			runs.close();
+			session.close();
 			val tbrList = new ListBuffer[RunDto]();
 			listResults.foreach(x => tbrList.add(x.asInstanceOf[RunDto]));
 			tbrList.toList;
 	}
 	def getMeasurements(runId: Long): List[MeasurementDto] = {
-			val measurements = Application.sessionFactory.openSession();
+			val session = Application.sessionFactory.openSession();
 			val hql = "FROM MeasurementDto M WHERE M.runId = :runId AND M.isActive = true";
-			val query = measurements.createQuery(hql);
+			val query = session.createQuery(hql);
 			query.setLong("runId", runId);
 			val listResults = query.list();
-			measurements.close();
+			session.close();
 			val tbrList = new ListBuffer[MeasurementDto]();
 			listResults.foreach(x => tbrList.add(x.asInstanceOf[MeasurementDto]));
 			tbrList.toList;
 	}
-	def getUserByUsernameOrEmail(user: String): Option[UserDto] = {
-	  val session = Application.sessionFactory.openSession();
-	  val hql = "FROM UserDto U WHERE U.username = :user OR U.email = :user";
-	  val query = session.createQuery(hql);
-	  query.setString("user", user.trim());
-	  val results = query.list();
-	  if(results.isEmpty()) {
-	    None
-	  } else {
-	    Some(results(0).asInstanceOf[UserDto]);
-	  }
+	def getUserFromEmail(user: String): Option[UserDto] = {
+			val session = Application.sessionFactory.openSession();
+			val hql = "FROM UserDto U WHERE U.email = :user";
+			val query = session.createQuery(hql);
+			query.setString("user", user.trim());
+			val results = query.list();
+			session.close();
+			if(results.isEmpty()) {
+				None
+			} else {
+				Some(results(0).asInstanceOf[UserDto]);
+			}
+	}
+	def getUsers: List[UserDto] = {
+			val session = Application.sessionFactory.openSession();
+			val hql = "FROM UserDto";
+			val query = session.createQuery(hql);
+			val results = query.list();
+			val tbrList = new ListBuffer[UserDto]();
+			results.foreach(x => tbrList.add(x.asInstanceOf[UserDto]));
+			tbrList.toList; 
 	}
 }

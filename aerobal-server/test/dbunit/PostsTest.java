@@ -40,12 +40,10 @@ public class PostsTest extends TestCase {
     
     @Test
     public void testAddUser() {
-    	String username = "testUserNameYeah";
     	String name = "somename";
     	String hash = "somehash";
     	String email = "some@email.com";
-    	UserDto user = Posts.addUser(username, name, hash, email);
-    	assertEquals(username,user.getUsername());
+    	UserDto user = Posts.addUser(name, hash, email);
     	assertEquals(name,user.getName());
     	assertEquals(hash,user.getHash());
     	assertEquals(email,user.getEmail());

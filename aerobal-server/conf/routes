@@ -23,7 +23,7 @@ GET		/sessions							controllers.Gets.sessions(userId: Long)
 GET		/experiments						controllers.Gets.experiments(sessionId: Long)
 GET		/runs								controllers.Gets.runs(experimentId: Long)
 GET		/measurements						controllers.Gets.measurements(runId: Long)
-#GET		/users								controllers.Gets.users
+GET		/users								controllers.Gets.users
 
 #Posts
 POST	/new_user							controllers.Posts.newUser
