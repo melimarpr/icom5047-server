@@ -1,5 +1,16 @@
 var main_website = "http://localhost:9000/";
 
+//Load Main On Ready
+$(document).ready(function(){
+
+    $.get(
+            main_website+"main",
+            function(data){
+                setDataToContainer(data);
+            }
+     );
+
+});
 
 //Main Content On Click
 $("#main-settings").click(function(){
@@ -31,7 +42,7 @@ $("#main-browse").click(function(){
         }
     );
 });
-$("#main-browse").click(function(){
+$("#main-sessions").click(function(){
     loadWaitingElement();
     $.get(
         main_website+"my_sessions",
@@ -41,13 +52,18 @@ $("#main-browse").click(function(){
     );
 });
 
+$("#main-search").keyup(function (e) {
+    if (e.keyCode == 13) {
+        loadWaitingElement();
+        console.log("Este Cabron")
+    }
+});
 
 
 
 function setDataToContainer(data){
     $("#container").html(data);
 }
-
 
 function loadWaitingElement(){
     $("#container").html('<div class="loader">Loading</div>');
@@ -56,9 +72,26 @@ function loadWaitingElement(){
 
 
 
+//Browser On-Click
 
+function browseSubmit(){
 
-
+    //Get Data
+    var query = $("#browse-session-query").val();
+    var email = $("#browse-email").val();
+    var order = $( "#browse-order option:selected" ).text();
+    loadWaitingElement();
+    $.get(
+        main_website+"search_sessions",
+        {
+            "query": query,
+            "email": email,
+            "order": order
+        }
+    ).done( function(data, status){
+        //Do Stuff
+    });
+}
 
 
 

@@ -1,0 +1,26 @@
+html {
+
+    font-family: Helvetiva;
+
+}
+
+.panel {
+    background-color: rgb(250, 250, 250);
+    box-shadow: 3px 3px 0px #333333;
+    padding: 10px;
+
+}
+
+/* General Helper Classes */
+
+.center {
+    bottom: 25%; left: 0; top: 0; right: 0;
+    margin: auto;
+    position: absolute;
+    width: 100%;
+    height: 25%;
+}
+
+.btn-success{
+     background-color: #68ba68;
+}

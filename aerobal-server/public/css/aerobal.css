@@ -98,6 +98,7 @@ a.btn-size-item {
     max-width: 50%;
     max-height:50%;
     margin-left:10px;
+    margin-right:10px;
 
 }
 
@@ -152,6 +153,23 @@ a:hover {
 }
 a:active {
     color: #000000;
+    text-decoration:none;
+}
+
+a.terms :link {
+    color: #2a842a;
+    text-decoration:none;
+}
+a.terms:visited {
+    color: #2a842a;
+    text-decoration:none;
+}
+a.terms:hover {
+    color: #676767;
+    text-decoration:none;
+}
+a.terms:active {
+    color: #2a842a;
     text-decoration:none;
 }
 
