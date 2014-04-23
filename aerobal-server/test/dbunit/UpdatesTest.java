@@ -24,7 +24,7 @@ import controllers.Application;
 import controllers.Puts;
 
 public class UpdatesTest extends TestCase {
-
+	String PLACEHOLDER_MUST_FIX = "";
 	@Before
 	protected void setUp() throws Exception {
 		Application.setTestConfigFile();
@@ -40,7 +40,7 @@ public class UpdatesTest extends TestCase {
 		Long sessionId = 1L;
 		String name = "updatedNameWhoo";
 		String description = "updatedDescYeah";
-		SessionDto session = Puts.updateSession(sessionId, OptionWrapper.some(name), OptionWrapper.some(description));
+		SessionDto session = Puts.updateSession(sessionId, OptionWrapper.some(name), OptionWrapper.some(description),PLACEHOLDER_MUST_FIX);
 		assertEquals(sessionId + 0,session.getId());
     	assertEquals(name,session.getName());
     	assertEquals(description,session.getDescription());
@@ -50,18 +50,16 @@ public class UpdatesTest extends TestCase {
 	public void testUpdateExperiment() {
 		Long experimentId = 1L;
 		String name = "updatedNameWhoo";
-		ExperimentDto experiment = Puts.updateExperiment(experimentId, OptionWrapper.some(name));
+		ExperimentDto experiment = Puts.updateExperiment(experimentId, OptionWrapper.some(name), PLACEHOLDER_MUST_FIX);
 		assertEquals(experimentId + 0,experiment.getId());
     	assertEquals(name,experiment.getName());
 	}
 
 	@Test
 	public void testUpdateUser() {
-		Long userId = 1L;
 		String name = "updatedNameWhoo";
 		String email = "updated@mailupdates.edu";
-		UserDto user = Puts.updateUser(userId, OptionWrapper.some(name), OptionWrapper.some(email));
-		assertEquals(userId + 0,user.getId());
+		UserDto user = Puts.updateUser(OptionWrapper.some(name), OptionWrapper.some(email), PLACEHOLDER_MUST_FIX);
     	assertEquals(name,user.getName());
     	assertEquals(email,user.getEmail());
 	}

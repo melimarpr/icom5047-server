@@ -26,7 +26,7 @@ import controllers.Posts;
 
 
 public class PostsTest extends TestCase {
-
+	String PLACEHOLDER_MUST_FIX = "";
     @Before
 	protected void setUp() throws Exception {
 		Application.setTestConfigFile();
@@ -43,7 +43,7 @@ public class PostsTest extends TestCase {
     	String name = "somename";
     	String hash = "somehash";
     	String email = "some@email.com";
-    	UserDto user = Posts.addUser(name, hash, email);
+    	UserDto user = Posts.addUser(name, hash, email).get();
     	assertEquals(name,user.getName());
     	assertEquals(hash,user.getHash());
     	assertEquals(email,user.getEmail());
@@ -51,12 +51,10 @@ public class PostsTest extends TestCase {
     }
     @Test
     public void testAddSession() {
-    	Long userId = 1L;
     	String name = "atestname";
     	String description = "This is a description.";
     	Boolean isPublic = true;
-    	SessionDto session = Posts.addSession(userId, name, description, isPublic);
-    	assertEquals(userId + 0,session.userId());
+    	SessionDto session = Posts.addSession(name, description, isPublic,PLACEHOLDER_MUST_FIX).get();
     	assertEquals(name,session.getName());
     	assertEquals(description,session.getDescription());
     	assertTrue(session.isPublic());
@@ -69,7 +67,7 @@ public class PostsTest extends TestCase {
     	Integer amountOfValues = 13;
     	Integer frequency = 4;
     	Double windSpeed = 5423.332342;
-    	ExperimentDto experiment = Posts.addExperiment(sessionId, name, amountOfValues, frequency, windSpeed);
+    	ExperimentDto experiment = Posts.addExperiment(sessionId, name, amountOfValues, frequency, windSpeed,PLACEHOLDER_MUST_FIX).get();
     	assertEquals(sessionId + 0,experiment.sessionId());
     	assertEquals(name,experiment.getName());
     	assertEquals((long)amountOfValues,experiment.getAmountOfValues());
@@ -81,7 +79,7 @@ public class PostsTest extends TestCase {
     @Test
     public void testAddRun() {
     	Long experimentId = 1L;
-    	RunDto run = Posts.addRun(experimentId);
+    	RunDto run = Posts.addRun(experimentId,PLACEHOLDER_MUST_FIX).get();
     	assertEquals(1,run.getExperimentId());
     	assertTrue(run.getId()  > 0);
     }
@@ -90,7 +88,7 @@ public class PostsTest extends TestCase {
     	Long runId = 1L;
     	Integer measurementTypeId = 1;
     	Double value = 2354834.23534;
-    	MeasurementDto measurement = Posts.addMeasurement(runId, measurementTypeId, value);
+    	MeasurementDto measurement = Posts.addMeasurement(runId, measurementTypeId, value,PLACEHOLDER_MUST_FIX).get();
     	assertEquals(runId + 0,measurement.getRunId());
     	assertEquals(measurementTypeId,measurement.getMeasurementTypeId());
     	assertEquals(value,measurement.getValue());
