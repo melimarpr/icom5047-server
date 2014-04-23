@@ -6,13 +6,13 @@ import play.api.mvc.Action
 object Deletes extends Controller {
 
 	def delete_session(sessionId: Long) = Action {
-		Ok(deleteSession(sessionId).toString);
+		Ok(deleteSession(sessionId).toString).as("application/json");
 	}
 	def delete_run(runId: Long) = Action {
-		Ok(deleteRun(runId).toString);
+		Ok(deleteRun(runId).toString).as("application/json");
 	}
 	def delete_experiment(experimentId: Long) = Action {
-		Ok(deleteExperiment(experimentId).toString);
+		Ok(deleteExperiment(experimentId).toString).as("application/json");
 	}
 	//	def delete_measurement(measurementId: Long) = Action {
 	//	  Ok(deleteMeasurement(measurementId).toString);

@@ -18,7 +18,7 @@ object Puts extends Controller {
 	  nameOpt.get(0).toString;
 	} else null;
 	val experiment = updateExperiment(experimentId, Some(name));
-	Ok(experiment.toString);
+	Ok(experiment.toString).as("application/json");
 	}
 	def update_session = Action { request => 
 	val values = request.body.asFormUrlEncoded.get;
@@ -32,7 +32,7 @@ object Puts extends Controller {
 	  descriptionOpt.get(0).toString;
 	} else null;
 	val session = updateSession(sessionId, Some(name), Some(description));
-	Ok(session.toString);
+	Ok(session.toString).as("application/json");
 	}
 	def update_user = Action { request =>
 	val values = request.body.asFormUrlEncoded.get;
@@ -46,7 +46,7 @@ object Puts extends Controller {
 	  emailOpt.get(0).toString;
 	} else null;
 	val experiment = updateUser(userId, Some(name), Some(email));
-	Ok(experiment.toString);
+	Ok(experiment.toString).as("application/json");
 	}
 	def updateSession(sessionId: Long, name: Option[String], desc: Option[String]): SessionDto =  {
 			val opt = Gets.getSession(sessionId);

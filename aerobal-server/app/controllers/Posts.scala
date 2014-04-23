@@ -18,7 +18,7 @@ object Posts extends Controller {
 	val password = values.get("password").get(0);
 	val email = values.get("email").get(0);
 	val user = addUser(username, name, password, email);
-	Ok(user.toString);
+	Ok(user.toString).as("application/json");
 	}
 	def newSession = Action { request => 
 	val values = request.body.asFormUrlEncoded.getOrElse(null);
@@ -27,13 +27,13 @@ object Posts extends Controller {
 	val desc = values.get("desc").get(0);
 	val isPublic = values.get("isPublic").getOrElse(List("false"))(0).toString().toBoolean;;
 	val session = addSession(userId, name, desc, isPublic);
-	Ok(session.toString);
+	Ok(session.toString).as("application/json");
 	}
 	def newRun = Action { request => 
 	val values = request.body.asFormUrlEncoded.get;
 	val experimentId = values.get("experimentId").get(0).toLong;
 	val experiment = addRun(experimentId);
-	Ok(experiment.toString);
+	Ok(experiment.toString).as("application/json");
 	}
 	def newExperiment = Action { request => 
 	val values = request.body.asFormUrlEncoded.get;
@@ -43,7 +43,7 @@ object Posts extends Controller {
 	val frequency = values.get("frequency").get(0).toInt;
 	val windSpeed = values.get("windSpeed").get(0).toDouble;
 	val experiment = addExperiment(sessionId, name, amountOfValues,frequency,windSpeed);
-	Ok(experiment.toString);
+	Ok(experiment.toString).as("application/json");
 	}
 	def newMeasurement = Action { request => 
 	val values = request.body.asFormUrlEncoded.get;
@@ -51,7 +51,7 @@ object Posts extends Controller {
 	val typeOf = values.get("typeOf").get(0).toInt;
 	val value = values.get("value").get(0).toDouble;
 	val experiment = addMeasurement(runId, typeOf, value);
-	Ok(experiment.toString);
+	Ok(experiment.toString).as("application/json");
 	}
 	def auth = Action {
 	  request => val values = request.body.asFormUrlEncoded.get;

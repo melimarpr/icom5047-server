@@ -13,7 +13,7 @@ object Gets extends Controller {
 	def measurement(id: Long) = Action {
 		val measurement = getMeasurement(id);
 		if(measurement.isDefined) {
-			Ok(measurement.get.toString);			
+			Ok(measurement.get.toString).as("application/json");			
 		} else {
 			NotFound("Id=" + id + " not found.");
 		}
@@ -22,7 +22,7 @@ object Gets extends Controller {
 	def experiment(id: Long) = Action {
 		val experiment = getExperiment(id);
 		if(experiment.isDefined) {
-			Ok(experiment.get.toString);
+			Ok(experiment.get.toString).as("application/json");
 		} 
 		else
 		{
@@ -32,7 +32,7 @@ object Gets extends Controller {
 	def run(id: Long) = Action {
 		val run = getRun(id);
 		if(run.isDefined) {
-			Ok(run.get.toString);
+			Ok(run.get.toString).as("application/json");
 		} 
 		else
 		{
@@ -42,7 +42,7 @@ object Gets extends Controller {
 	def session(id: Long) = Action {
 		val session = getSession(id);
 		if(session.isDefined) {
-			Ok(session.get.toString);
+			Ok(session.get.toString).as("application/json");
 		} 
 		else
 		{
@@ -52,7 +52,7 @@ object Gets extends Controller {
 	def user(id: Long) = Action {
 		val user = getUser(id);
 		if(user.isDefined) {
-			Ok(user.get.toString);
+			Ok(user.get.toString).as("application/json");
 		} 
 		else
 		{
@@ -62,7 +62,7 @@ object Gets extends Controller {
 	def sessions(userId: Long) = Action {
 		val sessions = getSessions(userId);
 		if(!sessions.isEmpty) {
-			Ok(new Gson().toJson(sessions.toArray));
+			Ok(new Gson().toJson(sessions.toArray)).as("application/json");
 		} 
 		else
 		{
@@ -72,7 +72,7 @@ object Gets extends Controller {
 	def experiments(sessionId: Long) = Action {
 		val experiments = getExperiments(sessionId);
 		if(!experiments.isEmpty) {
-			Ok(new Gson().toJson(experiments.toArray));
+			Ok(new Gson().toJson(experiments.toArray)).as("application/json");
 		} 
 		else
 		{
@@ -82,7 +82,7 @@ object Gets extends Controller {
 	def runs(experimentId: Long) = Action {
 		val runs = getRuns(experimentId);
 		if(!runs.isEmpty) {
-			Ok(new Gson().toJson(runs.toArray));
+			Ok(new Gson().toJson(runs.toArray)).as("application/json");
 		} 
 		else
 		{
@@ -92,7 +92,7 @@ object Gets extends Controller {
 	def measurements(runId: Long) = Action {
 		val measurements = getMeasurements(runId);
 		if(!measurements.isEmpty) {
-			Ok(new Gson().toJson(measurements.toArray));
+			Ok(new Gson().toJson(measurements.toArray)).as("application/json");
 		} 
 		else
 		{
