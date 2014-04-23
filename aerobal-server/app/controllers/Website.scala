@@ -39,5 +39,11 @@ object Website extends Controller{
     Ok(views.html.main())
   }
 
+  def logout = Action{
+
+    Ok("logout")
+
+  }
+
 
 }

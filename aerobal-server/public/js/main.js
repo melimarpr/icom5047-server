@@ -13,6 +13,35 @@ $("#main-settings").click(function(){
         }
     );
 });
+$("#main-menu").click(function(){
+    loadWaitingElement();
+    $.get(
+        main_website+"main",
+        function(data){
+            setDataToContainer(data);
+        }
+    );
+});
+$("#main-browse").click(function(){
+    loadWaitingElement();
+    $.get(
+        main_website+"browse",
+        function(data){
+            setDataToContainer(data);
+        }
+    );
+});
+$("#main-browse").click(function(){
+    loadWaitingElement();
+    $.get(
+        main_website+"my_sessions",
+        function(data){
+            setDataToContainer(data);
+        }
+    );
+});
+
+
 
 
 function setDataToContainer(data){
