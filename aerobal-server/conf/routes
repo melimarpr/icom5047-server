@@ -10,7 +10,9 @@ GET     /settings                           controllers.Website.settings
 GET     /main                               controllers.Website.main
 GET     /my_sessions                        controllers.Website.sessions
 GET     /browse                             controllers.Website.browse
+GET     /no_session                         controllers.Website.no_session
 GET     /logout                             controllers.Website.logout
+GET    /search_sessions                    controllers.Website.session_search
 
 
 # GET

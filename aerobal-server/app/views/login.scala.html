@@ -56,9 +56,11 @@
                         <a href="#" class="btn-back"><img src="assets/img/backbtn.png" /></a>
                     </div>
                     <div class="pure-u-4-5" >
-                        <input type="email" placeholder="Email">
-                        <input class="input=box" type="password" placeholder="Password">
-                        <br />
+                        <form class="pure-form">
+                            <input type="email" placeholder="Email">
+                            <input class="input=box" type="password" placeholder="Password">
+                        </form>
+
 
                         <button type="submit" class="pure-button btn-sign-in">Sign in</button>
                         <a id="btn-forgot" href="#" >Forgot Password</a>
@@ -73,8 +75,9 @@
                         <a href="#" class="btn-back"><img src="assets/img/backbtn.png" /></a>
                     </div>
                     <div class="pure-u-4-5" >
-                        <input type="email" placeholder="Email" style="width:75%;">
-                        <br />
+                        <form class="pure-form">
+                            <input type="email" placeholder="Email" style="width:90%;">
+                        </form>
                         <button type="submit" class="pure-button btn-sign-in">Send</button>
                     </div>
                 </div>
@@ -90,8 +93,8 @@
                         <form class="pure-form pure-form-aligned">
                             <fieldset>
                                 <div class="pure-control-group">
-                                    <label for="name">Username</label>
-                                    <input id="name" type="text" placeholder="Username">
+                                    <label for="email">Email Address</label>
+                                    <input id="email" type="email" placeholder="Email Address">
                                 </div>
 
                                 <div class="pure-control-group">
@@ -103,19 +106,9 @@
                                     <input id="confirm-password" type="password" placeholder="Password">
                                 </div>
 
-                                <div class="pure-control-group">
-                                    <label for="email">Email Address</label>
-                                    <input id="email" type="email" placeholder="Email Address">
-                                </div>
-
-                                <div class="pure-control-group">
-                                    <label for="foo">Institution</label>
-                                    <input id="foo" type="text" placeholder="Institution">
-                                </div>
-
                                 <div class="pure-controls">
                                     <label for="cb" class="pure-checkbox">
-                                        <input id="cb" type="checkbox"> I've read the terms and conditions
+                                        <input id="cb" type="checkbox"> I've read the <a class="terms" href="#">terms and conditions</a>
                                     </label>
 
                                     <button id="btn-complete-register" type="submit" class="pure-button btn-sign-in">Submit</button>

@@ -9,8 +9,25 @@ import play.api.mvc.Action
 object Website extends Controller{
 
 
+  def browse = Action {
+    //Return Default Browse Session HTML
+    Ok(views.html.browse())
+  }
+
+  def no_session = Action{
+
+    Ok(views.html.nosession())
+  }
+
+  def session_search = Action{
+
+
+    Ok(views.html.result())
+  }
+
 
   def index = Action {
+
     Ok("Test");
   }
 
@@ -27,9 +44,7 @@ object Website extends Controller{
     Ok(views.html.settings())
   }
 
-  def browse = Action {
-    Ok(views.html.browse())
-  }
+
 
   def sessions = Action{
     Ok(views.html.mysessions())
@@ -39,10 +54,17 @@ object Website extends Controller{
     Ok(views.html.main())
   }
 
+  def result =  Action {
+
+
+
+     Ok(views.html.result())
+
+  }
+
   def logout = Action{
 
     Ok("logout")
-
   }
 
 
