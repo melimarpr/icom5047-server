@@ -25,7 +25,7 @@ import controllers.Application;
 import controllers.Gets;
 
 public class GetsTest extends TestCase {
-
+	String PLACEHOLDER_MUST_FIX = "";
     @Before
 	protected void setUp() throws Exception {
 		
@@ -50,7 +50,7 @@ public class GetsTest extends TestCase {
 	}
 	@Test
 	public void testGetSession() {
-		SessionDto session = Gets.getSession(1).get();
+		SessionDto session = Gets.getSession(1,PLACEHOLDER_MUST_FIX).get();
 		assertEquals(1, session.getId());
 		assertEquals(1, session.getUserId());
 		assertEquals("testingSession",session.getName());
@@ -60,7 +60,7 @@ public class GetsTest extends TestCase {
 	}
 	@Test
 	public void testGetExperiment() {
-		ExperimentDto experiment = Gets.getExperiment(1).get();
+		ExperimentDto experiment = Gets.getExperiment(1,PLACEHOLDER_MUST_FIX).get();
 		assertEquals(1, experiment.getId());
 		assertEquals(1, experiment.getSessionId());
 		assertEquals("experimentname",experiment.getName());
@@ -71,14 +71,14 @@ public class GetsTest extends TestCase {
 	}
 	@Test
 	public void testGetRun() {
-		RunDto run = Gets.getRun(1).get();
+		RunDto run = Gets.getRun(1,PLACEHOLDER_MUST_FIX).get();
 		assertEquals(1, run.getId());
 		assertTrue(run.isActive());
 	}
 	
 	@Test
 	public void testGetMeasurement() {
-		MeasurementDto measurement = Gets.getMeasurement(1).get();
+		MeasurementDto measurement = Gets.getMeasurement(1,PLACEHOLDER_MUST_FIX).get();
 		assertEquals(1,measurement.getId());
 		assertEquals(1,measurement.getRunId());
 		assertEquals(1,(long)measurement.getMeasurementTypeId());

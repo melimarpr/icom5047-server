@@ -20,7 +20,7 @@ GET		/measurement						controllers.Gets.measurement(id: Long)
 GET		/experiment							controllers.Gets.experiment(id: Long)
 GET		/run								controllers.Gets.run(id: Long)
 GET		/session							controllers.Gets.session(id: Long)
-GET		/user								controllers.Gets.user(id: Long)
+GET		/user								controllers.Gets.user
 GET		/sessions							controllers.Gets.sessions(userId: Long)
 GET		/experiments						controllers.Gets.experiments(sessionId: Long)
 GET		/runs								controllers.Gets.runs(experimentId: Long)
@@ -35,10 +35,12 @@ POST	/new_run							controllers.Posts.newRun
 POST	/new_measurement					controllers.Posts.newMeasurement
 POST	/auth								controllers.Posts.auth
 
+
 #Updates
 PUT		/update_user						controllers.Puts.update_user
 PUT 	/update_experiment					controllers.Puts.update_experiment
 PUT		/update_session						controllers.Puts.update_session
+PUT		/update_password					controllers.Puts.update_password
 
 #Deletes
 DELETE	/delete_session						controllers.Deletes.delete_session(id: Long)

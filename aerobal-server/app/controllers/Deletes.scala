@@ -6,13 +6,27 @@ import play.api.mvc.Action
 object Deletes extends Controller {
 
 	def delete_session(sessionId: Long) = Action {
-		Ok(deleteSession(sessionId).toString).as("application/json");
+		request => 
+		val values = request.body.asFormUrlEncoded.get;
+		val token = values.get("token").getOrElse(List(""))(0);
+		val success = deleteSession(sessionId, token);
+		Ok("{\"success\":"+success+"}").as("application/json");
+
 	}
 	def delete_run(runId: Long) = Action {
-		Ok(deleteRun(runId).toString).as("application/json");
+		request => 
+		val values = request.body.asFormUrlEncoded.get;
+		val token = values.get("token").getOrElse(List(""))(0);
+		val success = deleteRun(runId, token);
+		Ok("{\"success\":"+success+"}").as("application/json");
 	}
+
 	def delete_experiment(experimentId: Long) = Action {
-		Ok(deleteExperiment(experimentId).toString).as("application/json");
+		request => 
+		val values = request.body.asFormUrlEncoded.get;
+		val token = values.get("token").getOrElse(List(""))(0);
+		val success = deleteExperiment(experimentId, token);
+		Ok("{\"success\":"+success+"}").as("application/json");
 	}
 	//	def delete_measurement(measurementId: Long) = Action {
 	//	  Ok(deleteMeasurement(measurementId).toString);
@@ -20,44 +34,47 @@ object Deletes extends Controller {
 	//	def delete_experiments(sessionId: Long) = Action {
 	//		Ok(deleteExperiments(sessionId).toString);
 	//	}
-	def deleteSession(sessionId: Long): Boolean = {
+	def deleteSession(sessionId: Long, token: String): Boolean = {
 			val session = Application.sessionFactory.openSession();	
 			session.beginTransaction();
 			deleteExperiments(session, sessionId);
-			val hql = "UPDATE SessionDto S set isActive = false "  + 
-					"WHERE S.id = :sessionId " +
-					"AND S.isActive = true";
+			val hql = "UPDATE SessionDto S set isActive = false WHERE S.id = :sessionId AND S.isActive = true" + 
+					"AND (S.userId IN (select id from UserDto WHERE token = :token) OR S.isPublic = true)";
 			val query = session.createQuery(hql);
 			query.setParameter("sessionId", sessionId);
+			query.setString("token", token);
 			val result = query.executeUpdate();
 			session.getTransaction().commit();
 			session.close();
 			result > 0
 	}
 
-	def deleteRun(runId: Long): Boolean = {
+	def deleteRun(runId: Long, token: String): Boolean = {
 			val session = Application.sessionFactory.openSession();	
 			session.beginTransaction();
 			deleteMeasurements(session, runId);
-			val hql = "UPDATE RunDto R set isActive = false "  + 
-					"WHERE R.id = :runId " +
-					"AND R.isActive = true";
+			val hql = "UPDATE RunDto R set isActive = false WHERE R.id = :runId AND R.isActive = true " + 
+					"(E.id = R.experimentId AND E.isActive = true AND " + 
+					"(S.id = E.sessionId AND S.isActive = true and (S.userId IN " + 
+					"(SELECT id from UserDto WHERE token = :token) OR S.isPublic = true)))";
 			val query = session.createQuery(hql);
 			query.setParameter("runId", runId);
+			query.setString("token", token);
 			val result = query.executeUpdate();
 			session.getTransaction().commit();
 			session.close();
 			result > 0
 	}
-	def deleteExperiment(experimentId: Long): Boolean = {
+	def deleteExperiment(experimentId: Long, token: String): Boolean = {
 			val session = Application.sessionFactory.openSession();	
 			session.beginTransaction();
 			deleteRuns(session, experimentId);
-			val hql = "UPDATE ExperimentDto E set isActive = false "  + 
-					"WHERE E.id = :experimentId " +
-					"AND E.isActive = true";
+			val hql = "UPDATE ExperimentDto E set isActive = false WHERE E.id = :experimentId AND E.isActive = true " + 
+					"(S.id = E.sessionId AND S.isActive = true and (S.userId IN " + 
+					"(select id from UserDto WHERE token = :token) OR S.isPublic = true))";
 			val query = session.createQuery(hql);
 			query.setParameter("experimentId", experimentId);
+			query.setString("token", token);
 			val result = query.executeUpdate();
 			session.getTransaction().commit();
 			session.close();
