@@ -59,6 +59,8 @@ object Posts extends Controller {
 	  val auth = authenticate(user, password)
 	  Ok("{\"token\":\"" + auth + "\"}");
 	}
+
+
 	def addUser(name: String, password: String, email: String): UserDto = {
 			val userDto = new UserDto();
 			userDto.setName(name);
