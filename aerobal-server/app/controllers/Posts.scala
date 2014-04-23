@@ -13,12 +13,11 @@ object Posts extends Controller {
 
 	def newUser = Action { request => 
 	val values = request.body.asFormUrlEncoded.get;
-	val username = values.get("username").get(0);
 	val name = values.get("name").get(0);
 	val password = values.get("password").get(0);
 	val email = values.get("email").get(0);
-	val user = addUser(username, name, password, email);
-	Ok(user.toString);
+	val user = addUser(name, password, email);
+	Ok(user.toString).as("application/json");
 	}
 	def newSession = Action { request => 
 	val values = request.body.asFormUrlEncoded.getOrElse(null);
@@ -27,13 +26,13 @@ object Posts extends Controller {
 	val desc = values.get("desc").get(0);
 	val isPublic = values.get("isPublic").getOrElse(List("false"))(0).toString().toBoolean;;
 	val session = addSession(userId, name, desc, isPublic);
-	Ok(session.toString);
+	Ok(session.toString).as("application/json");
 	}
 	def newRun = Action { request => 
 	val values = request.body.asFormUrlEncoded.get;
 	val experimentId = values.get("experimentId").get(0).toLong;
 	val experiment = addRun(experimentId);
-	Ok(experiment.toString);
+	Ok(experiment.toString).as("application/json");
 	}
 	def newExperiment = Action { request => 
 	val values = request.body.asFormUrlEncoded.get;
@@ -43,7 +42,7 @@ object Posts extends Controller {
 	val frequency = values.get("frequency").get(0).toInt;
 	val windSpeed = values.get("windSpeed").get(0).toDouble;
 	val experiment = addExperiment(sessionId, name, amountOfValues,frequency,windSpeed);
-	Ok(experiment.toString);
+	Ok(experiment.toString).as("application/json");
 	}
 	def newMeasurement = Action { request => 
 	val values = request.body.asFormUrlEncoded.get;
@@ -51,12 +50,17 @@ object Posts extends Controller {
 	val typeOf = values.get("typeOf").get(0).toInt;
 	val value = values.get("value").get(0).toDouble;
 	val experiment = addMeasurement(runId, typeOf, value);
-	Ok(experiment.toString);
+	Ok(experiment.toString).as("application/json");
 	}
-
-	def addUser(username: String, name: String, password: String, email: String): UserDto = {
+	def auth = Action {
+	  request => val values = request.body.asFormUrlEncoded.get;
+	  val user = values.get("user").get(0);
+	  val password = values.get("password").get(0);
+	  val auth = authenticate(user, password)
+	  Ok("{\"token\":\"" + auth + "\"}");
+	}
+	def addUser(name: String, password: String, email: String): UserDto = {
 			val userDto = new UserDto();
-			userDto.setUsername(username);
 			userDto.setName(name);
 			userDto.setHash(PasswordHash.createHash(password));
 			userDto.setEmail(email);
@@ -118,13 +122,15 @@ object Posts extends Controller {
 			measurement.getOrElse(null);	
 	}
 	def authenticate(user: String, password: String): String = {
-	  val userOpt = Gets.getUserByUsernameOrEmail(user);
+	  val userOpt = Gets.getUserFromEmail(user);
 	  if(userOpt.isDefined) {
 	    val user = userOpt.get;
 	    if(PasswordHash.validatePassword(password, user.getHash)) {
 	      user.token;
-	    } else {}
-	    "INCORRECTPASSWORD";
+	    } else {
+	      "INCORRECTPASSWORD";
+	    }
+	    
 	  }
 	  else {
 	    "NOTFOUND"

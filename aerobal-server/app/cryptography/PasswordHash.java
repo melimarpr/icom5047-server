@@ -28,11 +28,14 @@
 package cryptography;
 
 import java.security.SecureRandom;
+
 import javax.crypto.spec.PBEKeySpec;
 import javax.crypto.SecretKeyFactory;
+
 import java.math.BigInteger;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.Arrays;
 
 /*
  * PBKDF2 salted password hashing.
@@ -117,6 +120,8 @@ public class PasswordHash
         byte[] testHash = pbkdf2(password, salt, iterations, hash.length);
         // Compare the hashes in constant time. The password is correct if
         // both hashes match.
+        System.out.println(Arrays.toString(testHash));
+        System.out.println(Arrays.toString(hash));
         return slowEquals(hash, testHash);
     }
 

@@ -11,9 +11,6 @@
 		<property name="name" type="string">
 			<column name="name" not-null="true" />
 		</property>
-		<property name="username" type="string">
-			<column name="username" not-null="true" />
-		</property>
 		<property name="email" type="string">
 			<column name="email" not-null="true" />
 		</property>
