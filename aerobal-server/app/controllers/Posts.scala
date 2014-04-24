@@ -116,7 +116,7 @@ object Posts extends Controller {
 		val user = values.get("user").get(0);
 		val password = values.get("password").get(0);
 		val auth = authenticate(user, password)
-				Ok("{\"token\":\"" + auth + "\"}");
+				Ok("{\"token\":\"" + auth + "\"}").as("application/json");
 	}
 
 	def addUser(name: String, password: String, email: String): Option[UserDto] = {
