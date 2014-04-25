@@ -7,118 +7,155 @@ import scala.collection.mutable.ListBuffer
 import play.api.mvc.Action
 import play.api.mvc.Controller
 import com.google.gson.Gson
+import exceptions.InternalServerErrorException
+import exceptions.ForbiddenAccessException
+import javassist.NotFoundException
 
 object Gets extends Controller {
 	def user = Action {
 		request => 
-		val values = request.body.asFormUrlEncoded.get;
-		val token = values.get("token").getOrElse(List(""))(0);
-		val user = getUser(token);
-		if(user.isDefined) {
-			Ok(user.get.toString).as("application/json");
-		} 
-		else
-		{
-			Forbidden("Invalid Token");
-		} 
+		try {
+			val values = request.headers.toMap;
+			val token = values.getOrElse(Constants.TOKEN_TEXT, throw new NoSuchElementException("No token found."))(0);
+			val userOpt = getUser(token);
+			val user = userOpt.getOrElse(throw new ForbiddenAccessException("Invalid token used."));
+			Ok(user.toString);
+		}
+		catch {
+		case e: ForbiddenAccessException => { Forbidden(e.getMessage()) };
+		case e: NoSuchElementException => { BadRequest(e.getMessage()) };
+		case e: InternalServerErrorException => { InternalServerError(e.getMessage()) };
+		case e: Exception => { InternalServerError("Something went wrong...") }
+		}
 	}
 	def session(id: Long) = Action { 
 		request => 
-		val values = request.body.asFormUrlEncoded.get;
-		val name = values.get("token");
-		val token = name.getOrElse(List(""))(0);
-		val session = getSession(id, token);
-		if(session.isDefined) {
-			Ok(session.get.toString).as("application/json");
+		try {
+			val values = request.headers.toMap;
+			val token = values.getOrElse(Constants.TOKEN_TEXT, List(""))(0);
+			val sessionOpt = getSession(id, token);
+			val session = sessionOpt.getOrElse(throw new NotFoundException("Id=" + id + " not found."));
+			Ok(session.toString).as("application/json");
 		} 
-		else
-		{
-			NotFound("Id=" + id + " not found.");
-		} 
+		catch {
+		case e: NotFoundException => { NotFound(e.getMessage()) }
+		case e: Exception => { InternalServerError("Something went wrong...") }
+		}
 	}
 
 	def experiment(id: Long) = Action {
 		request => 
-		val values = request.body.asFormUrlEncoded.get;
-		val name = values.get("token");
-		val token = name.getOrElse(List(""))(0);
-		val experiment = getExperiment(id,token);
-		if(experiment.isDefined) {
-			Ok(experiment.get.toString).as("application/json");
-		} 
-		else
-		{
-			NotFound("Id=" + id + " not found.");
-		} 
+		try {
+			val values = request.headers.toMap;
+			val token = values.getOrElse(Constants.TOKEN_TEXT, List(""))(0);
+			val experimentOpt = getExperiment(id,token);
+			val experiment = experimentOpt.getOrElse(throw new NotFoundException("Id=" + id + " not found."));
+			Ok(experiment.toString).as("application/json");
+		}
+		catch {
+		case e: NotFoundException => { NotFound(e.getMessage()) }
+		case e: Exception => { InternalServerError("Something went wrong...") }
+		}
 	}
-	def run(id: Long) = Action {
+	def run(id: Long) = Action {	
 		request => 
-		val values = request.body.asFormUrlEncoded.get;
-		val name = values.get("token");
-		val token = name.getOrElse(List(""))(0);
-		val experiment = getExperiment(id,token);
-		val run = getRun(id,token);
-		if(run.isDefined) {
-			Ok(run.get.toString).as("application/json");
+		try {
+			val values = request.headers.toMap;
+			val token = values.getOrElse(Constants.TOKEN_TEXT, List(""))(0);
+			val runOpt = getRun(id,token);
+			val run = runOpt.getOrElse(throw new NotFoundException("Id=" + id + " not found."));
+			Ok(run.toString).as("application/json");
 		} 
-		else
-		{
-			NotFound("Id=" + id + " not found.");
-		} 
+		catch {
+		case e: NotFoundException => { NotFound(e.getMessage()) }
+		case e: Exception => { InternalServerError("Something went wrong...") }
+		}
 	}
 
 	def measurement(id: Long) = Action {
 		request => 
-		val values = request.body.asFormUrlEncoded.get;
-		val name = values.get("token");
-		val token = name.getOrElse(List(""))(0);
-		val measurement = getMeasurement(id,token);
-		if(measurement.isDefined) {
-			Ok(measurement.get.toString).as("application/json");			
-		} else {
-			NotFound("Id=" + id + " not found.");
+		try {
+			val values = request.headers.toMap;
+			val token = values.getOrElse(Constants.TOKEN_TEXT, List(""))(0);
+			val measurementOpt = getMeasurement(id,token);
+			val measurement = measurementOpt.getOrElse(throw new NotFoundException("Id=" + id + " not found."));
+			Ok(measurement.toString).as("application/json");
+		} 
+		catch {
+		case e: NotFoundException => { NotFound(e.getMessage()) }
+		case e: Exception => { InternalServerError("Something went wrong...") }
+		}
+	}
+	def sessions(userId: Long) = Action {
+		request =>
+		try {
+			val values = request.headers.toMap;
+			val token = values.getOrElse(Constants.TOKEN_TEXT, List(""))(0);
+			val userOpt = getUser(userId);
+			if(userOpt.isEmpty) {
+				throw new NotFoundException("Id=" + userId + " not found.")
+			}
+			val sessions = getSessions(userId,token);
+			Ok(new Gson().toJson(sessions.toArray)).as("application/json");
+		} 
+		catch {
+		case e: NotFoundException => { NotFound(e.getMessage()) }
+		case e: Exception => { InternalServerError("Something went wrong...") }
 		}
 
 	}
-	def sessions(userId: Long) = Action {
-		val sessions = getSessions(userId);
-		if(!sessions.isEmpty) {
-			Ok(new Gson().toJson(sessions.toArray)).as("application/json");
-		} 
-		else
-		{
-			NotFound("Id=" + userId + " not found.");
-		} 
-	}
 	def experiments(sessionId: Long) = Action {
-		val experiments = getExperiments(sessionId);
-		if(!experiments.isEmpty) {
+		request =>
+		try {
+			val values = request.headers.toMap;
+			val token = values.getOrElse(Constants.TOKEN_TEXT, List(""))(0);
+			val sessionOpt = getSession(sessionId,token);
+			if(sessionOpt.isEmpty) {
+				throw new NotFoundException("Id=" + sessionId + " not found.")
+			}
+			val experiments = getExperiments(sessionId, token);
 			Ok(new Gson().toJson(experiments.toArray)).as("application/json");
 		} 
-		else
-		{
-			NotFound("Id=" + sessionId + " not found.");
-		} 
+		catch {
+		case e: NotFoundException => { NotFound(e.getMessage()) }
+		case e: Exception => { InternalServerError("Something went wrong...") }
+		}
 	}
 	def runs(experimentId: Long) = Action {
-		val runs = getRuns(experimentId);
-		if(!runs.isEmpty) {
+		request =>
+		try {
+			val values = request.headers.toMap;
+			val token = values.getOrElse(Constants.TOKEN_TEXT, List(""))(0);
+			val experimentOpt = getExperiment(experimentId, token);
+			if(experimentOpt.isEmpty) {
+				throw new NotFoundException("Id=" + experimentId + " not found.")
+			}
+			val runs = getRuns(experimentId, token);
 			Ok(new Gson().toJson(runs.toArray)).as("application/json");
 		} 
-		else
-		{
-			NotFound("Id=" + experimentId + " not found.");
-		} 
+		catch {
+		case e: NotFoundException => { NotFound(e.getMessage()) }
+		case e: Exception => { InternalServerError("Something went wrong...") }
+		}
+
 	}
 	def measurements(runId: Long) = Action {
-		val measurements = getMeasurements(runId);
-		if(!measurements.isEmpty) {
+		request =>
+		try {
+			val values = request.headers.toMap;
+			val token = values.getOrElse(Constants.TOKEN_TEXT, List(""))(0);
+			val runOpt = getExperiment(runId, token);
+			if(runOpt.isEmpty) {
+				throw new NotFoundException("Id=" + runId + " not found.")
+			}
+			val measurements = getMeasurements(runId, token);
 			Ok(new Gson().toJson(measurements.toArray)).as("application/json");
 		} 
-		else
-		{
-			NotFound("Id=" + runId + " not found.");
-		} 
+		catch {
+		case e: NotFoundException => { NotFound(e.getMessage()) }
+		case e: Exception => { InternalServerError("Something went wrong...") }
+		}
+
 	}
 	def users = Action {
 		val users = getUsers;
@@ -148,7 +185,7 @@ object Gets extends Controller {
 			val session = Application.sessionFactory.openSession();
 			val hql = "FROM UserDto U WHERE U.token = :token AND U.isActive = true";
 			val query = session.createQuery(hql);
-			query.setString("token", token);
+			query.setString(Constants.TOKEN_TEXT, token);
 			val listResults = query.list();
 			session.close();
 			if(!listResults.isEmpty()) {
@@ -163,7 +200,7 @@ object Gets extends Controller {
 			val hql = "FROM SessionDto S WHERE S.id = :sessionId AND S.isActive = true " +  
 					"AND (S.userId IN (select id from UserDto WHERE token = :token) OR S.isPublic = true)";
 			val query = session.createQuery(hql);
-			query.setString("token", token);
+			query.setString(Constants.TOKEN_TEXT, token.trim());
 			query.setLong("sessionId", sessionId);
 			val listResults = query.list();
 			session.close();
@@ -181,7 +218,7 @@ object Gets extends Controller {
 					"(select id from UserDto WHERE token = :token) OR S.isPublic = true))";
 			val query = session.createQuery(hql);
 			query.setLong("experimentId", experimentId);
-			query.setString("token", token);
+			query.setString(Constants.TOKEN_TEXT, token);
 			val listResults = query.list();
 			session.close();
 			if(!listResults.isEmpty()) {
@@ -199,7 +236,7 @@ object Gets extends Controller {
 					"(SELECT id from UserDto WHERE token = :token) OR S.isPublic = true)))";
 			val query = session.createQuery(hql);
 			query.setLong("runId", runId);
-			query.setString("token", token);
+			query.setString(Constants.TOKEN_TEXT, token);
 			val listResults = query.list();
 			session.close();
 			if(!listResults.isEmpty()) {
@@ -219,7 +256,7 @@ object Gets extends Controller {
 					"(SELECT id from UserDto WHERE token = :token) OR S.isPublic = true))))";
 			val query = session.createQuery(hql);
 			query.setLong("measurementId", measurementId);
-			query.setString("token", token);
+			query.setString(Constants.TOKEN_TEXT, token);
 			val listResults = query.list();
 			session.close();
 			if(!listResults.isEmpty()) {
@@ -238,14 +275,14 @@ object Gets extends Controller {
 			results.foreach(x => tbrList.add(x.asInstanceOf[UserDto]));
 			tbrList.toList;
 	}
-	def getSessions(userId: Long): List[SessionDto] = {
+	def getSessions(userId: Long,token: String): List[SessionDto] = {
 			val session = Application.sessionFactory.openSession();
 			val hql = "FROM SessionDto S WHERE S.userId = :userId AND S.isActive = true AND " + 
 					" (S.userId IN " + 
 					"(select id from UserDto WHERE token = :token) OR S.isPublic = true)";
 			val query = session.createQuery(hql);
 			query.setLong("userId", userId);
-			query.setString("token", Application.token);
+			query.setString(Constants.TOKEN_TEXT, token);
 			val listResults = query.list();
 			session.close();
 			val tbrList = new ListBuffer[SessionDto]();
@@ -253,21 +290,21 @@ object Gets extends Controller {
 			tbrList.toList;
 	}
 
-	def getExperiments(sessionId: Long): List[ExperimentDto] = {
+	def getExperiments(sessionId: Long, token: String): List[ExperimentDto] = {
 			val session = Application.sessionFactory.openSession();
 			val hql = "SELECT E FROM ExperimentDto E, SessionDto S WHERE E.sessionId = :sessionId AND E.isActive = true AND " +
 					"(S.id = E.sessionId AND S.isActive = true and (S.userId IN " + 
 					"(select id from UserDto WHERE token = :token) OR S.isPublic = true))";
 			val query = session.createQuery(hql);
 			query.setLong("sessionId", sessionId);
-			query.setString("token", Application.token);
+			query.setString(Constants.TOKEN_TEXT, token);
 			val listResults = query.list();
 			session.close();
 			val tbrList = new ListBuffer[ExperimentDto]();
 			listResults.foreach(x => tbrList.add(x.asInstanceOf[ExperimentDto]));
 			tbrList.toList;
 	}
-	def getRuns(experimentId: Long): List[RunDto] = {
+	def getRuns(experimentId: Long, token: String): List[RunDto] = {
 			val session = Application.sessionFactory.openSession();
 			val hql = "SELECT R FROM RunDto R, ExperimentDto E, SessionDto S  WHERE R.experimentId = :experimentId  AND R.isActive = true AND " +
 					"(E.id = R.experimentId AND E.isActive = true AND " + 
@@ -275,14 +312,14 @@ object Gets extends Controller {
 					"(SELECT id from UserDto WHERE token = :token) OR S.isPublic = true)))";
 			val query = session.createQuery(hql);
 			query.setLong("experimentId", experimentId);
-			query.setString("token", Application.token);
+			query.setString(Constants.TOKEN_TEXT, token);
 			val listResults = query.list();
 			session.close();
 			val tbrList = new ListBuffer[RunDto]();
 			listResults.foreach(x => tbrList.add(x.asInstanceOf[RunDto]));
 			tbrList.toList;
 	}
-	def getMeasurements(runId: Long): List[MeasurementDto] = {
+	def getMeasurements(runId: Long, token: String): List[MeasurementDto] = {
 			val session = Application.sessionFactory.openSession();
 			val hql = "SELECT M FROM MeasurementDto M, RunDto R, ExperimentDto E, SessionDto S WHERE M.runId = :runId AND M.isActive = true AND " +
 					"(R.id = M.runId AND R.isActive = true AND " + 
@@ -291,7 +328,7 @@ object Gets extends Controller {
 					"(SELECT id from UserDto WHERE token = :token) OR S.isPublic = true))))";
 			val query = session.createQuery(hql);
 			query.setLong("runId", runId);
-			query.setString("token", Application.token);
+			query.setString(Constants.TOKEN_TEXT, token);
 			val listResults = query.list();
 			session.close();
 			val tbrList = new ListBuffer[MeasurementDto]();

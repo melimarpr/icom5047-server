@@ -40,7 +40,7 @@ public class UpdatesTest extends TestCase {
 		Long sessionId = 1L;
 		String name = "updatedNameWhoo";
 		String description = "updatedDescYeah";
-		SessionDto session = Puts.updateSession(sessionId, OptionWrapper.some(name), OptionWrapper.some(description),PLACEHOLDER_MUST_FIX);
+		SessionDto session = Puts.updateSession(sessionId, OptionWrapper.some(name), OptionWrapper.some(description),PLACEHOLDER_MUST_FIX).get();
 		assertEquals(sessionId + 0,session.getId());
     	assertEquals(name,session.getName());
     	assertEquals(description,session.getDescription());
@@ -50,7 +50,7 @@ public class UpdatesTest extends TestCase {
 	public void testUpdateExperiment() {
 		Long experimentId = 1L;
 		String name = "updatedNameWhoo";
-		ExperimentDto experiment = Puts.updateExperiment(experimentId, OptionWrapper.some(name), PLACEHOLDER_MUST_FIX);
+		ExperimentDto experiment = Puts.updateExperiment(experimentId, OptionWrapper.some(name), PLACEHOLDER_MUST_FIX).get();
 		assertEquals(experimentId + 0,experiment.getId());
     	assertEquals(name,experiment.getName());
 	}
@@ -59,7 +59,7 @@ public class UpdatesTest extends TestCase {
 	public void testUpdateUser() {
 		String name = "updatedNameWhoo";
 		String email = "updated@mailupdates.edu";
-		UserDto user = Puts.updateUser(OptionWrapper.some(name), OptionWrapper.some(email), PLACEHOLDER_MUST_FIX);
+		UserDto user = Puts.updateUser(OptionWrapper.some(name), OptionWrapper.some(email), PLACEHOLDER_MUST_FIX).get();
     	assertEquals(name,user.getName());
     	assertEquals(email,user.getEmail());
 	}
