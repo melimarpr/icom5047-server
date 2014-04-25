@@ -46,15 +46,12 @@ object Posts extends Controller {
 			val password = values.get(USER_PASSWORD_TEXT).getOrElse(throw new NoSuchElementException("Parameter \'" + USER_PASSWORD_TEXT+ "\' is missing."))(0);
 			val email = values.get(USER_EMAIL_TEXT).getOrElse(throw new NoSuchElementException("Parameter \'" + USER_EMAIL_TEXT+ "\' is missing."))(0);
 			val userOpt = addUser(name, password, email);
-			if(userOpt.isDefined) {
-				Ok(userOpt.get.toString).as("application/json");
-			}
-			else {
-				BadRequest("Something went wrong...");
-			}
+			val user = userOpt.getOrElse(throw new InternalServerErrorException("Something went wrong..."));
+			Ok(user.toString).as("application/json");
 		}
 		catch {
 		case e: NoSuchElementException => { BadRequest(e.getMessage()) };
+		case e: InternalServerErrorException => { InternalServerError(e.getMessage()) };
 		case e: Exception => { InternalServerError("Something went wrong...") }
 		}
 	}
@@ -151,11 +148,19 @@ object Posts extends Controller {
 
 	def auth = Action {
 		request => 
-		val values = request.body.asFormUrlEncoded.getOrElse(throw new NoSuchElementException("No Form URL Encoded body supplied."));
-		val user = values.get(AUTH_USER_TEXT).getOrElse(throw new NoSuchElementException("Parameter \'" + AUTH_USER_TEXT + "\' is missing."))(0);
-		val password = values.get(AUTH_PASSWORD_TEXT).getOrElse(throw new NoSuchElementException("Parameter \'" + AUTH_PASSWORD_TEXT + "\' is missing."))(0);
-		val auth = authenticate(user, password)
-				Ok("{\"token\":\"" + auth + "\"}").as("application/json");
+		try {
+			val values = request.body.asFormUrlEncoded.getOrElse(throw new NoSuchElementException("No Form URL Encoded body supplied."));
+			val user = values.get(AUTH_USER_TEXT).getOrElse(throw new NoSuchElementException("Parameter \'" + AUTH_USER_TEXT + "\' is missing."))(0);
+			val password = values.get(AUTH_PASSWORD_TEXT).getOrElse(throw new NoSuchElementException("Parameter \'" + AUTH_PASSWORD_TEXT + "\' is missing."))(0);
+			val auth = authenticate(user, password);
+			Ok("{\"token\":\"" + auth + "\"}").as("application/json");
+		}
+		catch {
+		case e: NoSuchElementException => { BadRequest(e.getMessage()) };
+		case e: InternalServerErrorException => { InternalServerError(e.getMessage()) };
+		case e: Exception => { InternalServerError("Something went wrong...") };
+		}
+
 	}
 
 	def addUser(name: String, password: String, email: String): Option[UserDto] = {
