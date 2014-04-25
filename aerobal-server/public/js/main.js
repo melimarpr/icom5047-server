@@ -66,7 +66,7 @@ function setDataToContainer(data){
 }
 
 function loadWaitingElement(){
-    $("#container").html('<div class="loader">Loading</div>');
+    $("#container").html('<div class="panel center-loader"><div class="loader" style="margin-bottom:200px;">Loading</div></div>');
 }
 
 

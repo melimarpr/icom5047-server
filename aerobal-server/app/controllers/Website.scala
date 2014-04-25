@@ -26,9 +26,14 @@ object Website extends Controller{
   }
 
 
-  def index = Action {
-
-    Ok("Test");
+  def index = Action { request =>
+    val token = request.session.get("token")
+    //Is Empty Redirect to Login
+    if(token.isEmpty){
+      Redirect(routes.Website.login)
+    } else{
+      Redirect(routes.Website.panel)
+    }
   }
 
   def login = Action {
@@ -55,9 +60,6 @@ object Website extends Controller{
   }
 
   def result =  Action {
-
-
-
      Ok(views.html.result())
 
   }
