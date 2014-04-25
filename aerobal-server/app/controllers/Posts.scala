@@ -9,112 +9,151 @@ import play.api.mvc.Action
 import play.api.mvc.Controller
 import cryptography.PasswordHash
 import views.html.defaultpages.badRequest
+import exceptions.ForbiddenAccessException
+import exceptions.InternalServerErrorException
 
 object Posts extends Controller {
+	val TOKEN_TEXT = "token";
+	val USER_NAME_TEXT = "name";
+	val USER_PASSWORD_TEXT = "password";
+	val USER_EMAIL_TEXT = "email";
 
+	val SESSION_NAME_TEXT = "name";
+	val SESSION_DESCRIPTION_TEXT = "desc";
+	val SESSION_IS_PUBLIC_TEXT = "isPublic";
+
+	val EXPERIMENT_SESSION_ID_TEXT = "sessionId";
+	val EXPERIMENT_NAME_TEXT = "name";
+	val EXPERIMENT_AMOUNT_OF_VALUES_TEXT = "amountOfValues";
+	val EXPERIMENT_FREQUENCY_TEXT = "frequency";
+	val EXPERIMENT_WIND_SPEED_TEXT = "windSpeed";
+
+	val RUN_EXPERIMENT_ID_TEXT = "experimentId";
+
+	val MEASUREMENT_RUN_ID_TEXT = "runId";
+	val MEASUREMENT_TYPE_OF_TEXT = "typeOf";
+	val MEASUREMENT_VALUE_TEXT = "value";
+
+	val AUTH_USER_TEXT = "user";
+	val AUTH_PASSWORD_TEXT = "password";
+
+	val emptyList = List("");
 	def newUser = Action { 
 		request => 
-		val values = request.body.asFormUrlEncoded.get;
-		val name = values.get("name").get(0);
-		val password = values.get("password").get(0);
-		val email = values.get("email").get(0);
-		val userOpt = addUser(name, password, email);
-		if(userOpt.isDefined) {
-			Ok(userOpt.get.toString).as("application/json");
+		try {
+			val values = request.body.asFormUrlEncoded.getOrElse(throw new NoSuchElementException("No Form URL Encoded body supplied."));
+			val name = values.get(USER_NAME_TEXT).getOrElse(throw new NoSuchElementException("Parameter \'" + USER_NAME_TEXT+ "\' is missing."))(0);
+			val password = values.get(USER_PASSWORD_TEXT).getOrElse(throw new NoSuchElementException("Parameter \'" + USER_PASSWORD_TEXT+ "\' is missing."))(0);
+			val email = values.get(USER_EMAIL_TEXT).getOrElse(throw new NoSuchElementException("Parameter \'" + USER_EMAIL_TEXT+ "\' is missing."))(0);
+			val userOpt = addUser(name, password, email);
+			if(userOpt.isDefined) {
+				Ok(userOpt.get.toString).as("application/json");
+			}
+			else {
+				BadRequest("Something went wrong...");
+			}
 		}
-		else {
-			BadRequest("Something went wrong...");
+		catch {
+		case e: NoSuchElementException => { BadRequest(e.getMessage()) };
+		case e: Exception => { InternalServerError("Something went wrong...") }
 		}
 	}
 	def newSession = Action { 
 		request => 
-		val values = request.body.asFormUrlEncoded.getOrElse(null);
-		val token = values.get("token").get(0);
-		val userOpt = Gets.getUser(token);
-		if(userOpt.isDefined) {
-			val name = values.get("name").get(0);
-			val desc = values.get("desc").get(0);
-			val isPublic = values.get("isPublic").getOrElse(List("false"))(0).toString().toBoolean;;
+		try {
+			val values = request.body.asFormUrlEncoded.getOrElse(throw new NoSuchElementException("No Form URL Encoded body supplied."));
+			val token = values.get(TOKEN_TEXT).getOrElse(throw new ForbiddenAccessException("No token passed."))(0);
+			val user = Gets.getUser(token).getOrElse(throw new ForbiddenAccessException("Invalid token."));
+			val name = values.get(SESSION_NAME_TEXT).getOrElse(throw new NoSuchElementException("Parameter \'" + SESSION_NAME_TEXT + "\' is missing."))(0);
+			val desc = values.get(SESSION_DESCRIPTION_TEXT).getOrElse(throw new NoSuchElementException("Parameter \'" + SESSION_DESCRIPTION_TEXT + "\' is missing."))(0);
+			val isPublic = values.get(SESSION_IS_PUBLIC_TEXT).getOrElse(List("false"))(0).toBoolean;;
 			val sessionOpt = addSession(name, desc, isPublic, token);
-			if(sessionOpt.isDefined) {
-				Ok(sessionOpt.get.toString).as("application/json");
-			}
-			else {
-				BadRequest("Something went wrong...");
-			} 
+			val session = sessionOpt.getOrElse(throw new InternalServerErrorException("Something went wrong..."));
+			Ok(session.toString).as("application/json");
 		}
-		else {
-			Forbidden("Invalid token or not found.");
+		catch {
+		case e: ForbiddenAccessException => { Forbidden(e.getMessage()) };
+		case e: NoSuchElementException => { BadRequest(e.getMessage()) };
+		case e: InternalServerErrorException => { InternalServerError(e.getMessage()) };
+		case e: Exception => { InternalServerError("Something went wrong...") };
+		}
+	}
+
+	def newExperiment = Action { 
+		request => 
+		try {
+			val values = request.body.asFormUrlEncoded.getOrElse(throw new NoSuchElementException("No Form URL Encoded body supplied."));
+			val token = values.get(TOKEN_TEXT).getOrElse(throw new ForbiddenAccessException("No token passed."))(0);
+			val sessionId = values.get(EXPERIMENT_SESSION_ID_TEXT).getOrElse(throw new NoSuchElementException("Parameter \'" + EXPERIMENT_SESSION_ID_TEXT + "\' is missing."))(0).toLong;
+			if(!Application.isSessionFromUser(sessionId, token)) { 
+				throw new ForbiddenAccessException("Session does not belong to user.")
+			}
+			val name = values.get(EXPERIMENT_NAME_TEXT).getOrElse(throw new NoSuchElementException("Parameter \'" + EXPERIMENT_NAME_TEXT + "\' is missing."))(0);
+			val amountOfValues = values.get(EXPERIMENT_AMOUNT_OF_VALUES_TEXT).getOrElse(throw new NoSuchElementException("Parameter \'" + EXPERIMENT_AMOUNT_OF_VALUES_TEXT + "\' is missing."))(0).toInt;
+			val frequency = values.get(EXPERIMENT_FREQUENCY_TEXT).getOrElse(throw new NoSuchElementException("Parameter \'" + EXPERIMENT_FREQUENCY_TEXT + "\' is missing."))(0).toInt;
+			val windSpeed = values.get(EXPERIMENT_WIND_SPEED_TEXT).getOrElse(throw new NoSuchElementException("Parameter \'" + EXPERIMENT_WIND_SPEED_TEXT + "\' is missing."))(0).toDouble;
+			val experimentOpt = addExperiment(sessionId, name, amountOfValues, frequency, windSpeed, token);
+			val experiment = experimentOpt.getOrElse(throw new InternalServerErrorException("Something went wrong..."));
+			Ok(experiment.toString).as("application/json");
+
+
+		}		
+		catch {
+		case e: ForbiddenAccessException => { Forbidden(e.getMessage()) };
+		case e: NoSuchElementException => { BadRequest(e.getMessage()) };
+		case e: InternalServerErrorException => { InternalServerError(e.getMessage()) };
+		case e: Exception => { InternalServerError("Something went wrong...") };
 		}
 	}
 	def newRun = Action { 
 		request => 
-		val values = request.body.asFormUrlEncoded.get;
-		val experimentId = values.get("experimentId").get(0).toLong;
-		val token = values.get("token").get(0);
-		if(Application.isExperimentFromUser(experimentId, token)) {
+		try {
+			val values = request.body.asFormUrlEncoded.getOrElse(throw new NoSuchElementException("No Form URL Encoded body supplied."));
+			val token = values.get(TOKEN_TEXT).getOrElse(throw new ForbiddenAccessException("No token passed."))(0);
+			val experimentId = values.get(RUN_EXPERIMENT_ID_TEXT).getOrElse(throw new NoSuchElementException("Parameter \'" + RUN_EXPERIMENT_ID_TEXT + "\' is missing."))(0).toLong;
+			if(!Application.isExperimentFromUser(experimentId, token)) {
+				throw new ForbiddenAccessException("Run does not belong to user.");
+			}
 			val runOpt = addRun(experimentId, token);
+			val run = runOpt.getOrElse(throw new InternalServerErrorException("Something went wrong..."));
+			Ok(runOpt.toString).as("application/json");
+		}
+		catch {
+		case e: ForbiddenAccessException => { Forbidden(e.getMessage()) };
+		case e: NoSuchElementException => { BadRequest(e.getMessage()) };
+		case e: InternalServerErrorException => { InternalServerError(e.getMessage()) };
+		case e: Exception => { InternalServerError("Something went wrong...") };
+		}
 
-			if(runOpt.isDefined) {
-				Ok(runOpt.toString).as("application/json");
-			}
-			else {
-				BadRequest("Something went wrong...");
-			}
-		} else {
-		  val experimentOpt = Gets.getExperiment(experimentId, token);
-			Forbidden("Invalid token or not found.")
-		  
-		}
-	}
-	def newExperiment = Action { 
-		request => 
-		val values = request.body.asFormUrlEncoded.get;
-		val token = values.get("token").get(0);
-		val sessionId = values.get("sessionId").get(0).toLong;
-		if(Application.isSessionFromUser(sessionId, token)) {
-			val name = values.get("name").get(0);
-			val amountOfValues = values.get("amountOfValues").get(0).toInt;
-			val frequency = values.get("frequency").get(0).toInt;
-			val windSpeed = values.get("windSpeed").get(0).toDouble;
-			val experimentOpt = addExperiment(sessionId, name, amountOfValues,frequency,windSpeed, token);
-
-			if(experimentOpt.isDefined) {
-				Ok(experimentOpt.toString).as("application/json");
-			}
-			else {
-				BadRequest("Something went wrong...");
-			}
-		}
-		else {
-			Forbidden("Invalid token or not found.")
-		}
 	}
 	def newMeasurement = Action { 
 		request => 
-		val values = request.body.asFormUrlEncoded.get;
-		val runId = values.get("runId").get(0).toLong;
-		val token = values.get("token").get(0);
-		if(Application.isRunFromUser(runId, token)) {
-			val typeOf = values.get("typeOf").get(0).toInt;
-			val value = values.get("value").get(0).toDouble;
+		try {
+			val values = request.body.asFormUrlEncoded.getOrElse(throw new NoSuchElementException("No Form URL Encoded body supplied."));
+			val runId = values.get(MEASUREMENT_RUN_ID_TEXT).getOrElse(throw new NoSuchElementException("Parameter \'" + MEASUREMENT_RUN_ID_TEXT + "\' is missing."))(0).toLong;
+			val token = values.get(TOKEN_TEXT).getOrElse(throw new ForbiddenAccessException("No token passed."))(0);
+			if(!Application.isRunFromUser(runId, token)) {
+				throw new ForbiddenAccessException("Run does not belong to user.");
+			}
+			val typeOf = values.get(MEASUREMENT_TYPE_OF_TEXT).getOrElse(throw new NoSuchElementException("Parameter \'" + MEASUREMENT_TYPE_OF_TEXT + "\' is missing."))(0).toInt;
+			val value = values.get(MEASUREMENT_VALUE_TEXT).getOrElse(throw new NoSuchElementException("Parameter \'" + MEASUREMENT_VALUE_TEXT + "\' is missing."))(0).toDouble;
 			val measurementOpt = addMeasurement(runId, typeOf, value, token);
-			if(measurementOpt.isDefined) {
-				Ok(measurementOpt.get.toString).as("application/json");
-			}
-			else {
-				BadRequest("Something went wrong...");
-			}
+			val measurement = measurementOpt.getOrElse(throw new InternalServerErrorException("Something went wrong..."));
+			Ok(measurementOpt.get.toString).as("application/json");
 		}
-		else {
-			Forbidden("Invalid token or not found.")
+		catch {
+		case e: ForbiddenAccessException => { Forbidden(e.getMessage()) };
+		case e: NoSuchElementException => { BadRequest(e.getMessage()) };
+		case e: InternalServerErrorException => { InternalServerError(e.getMessage()) };
+		case e: Exception => { InternalServerError("Something went wrong...") };
 		}
 	}
 
 	def auth = Action {
-		request => val values = request.body.asFormUrlEncoded.get;
-		val user = values.get("user").get(0);
-		val password = values.get("password").get(0);
+		request => 
+		val values = request.body.asFormUrlEncoded.getOrElse(throw new NoSuchElementException("No Form URL Encoded body supplied."));
+		val user = values.get(AUTH_USER_TEXT).getOrElse(throw new NoSuchElementException("Parameter \'" + AUTH_USER_TEXT + "\' is missing."))(0);
+		val password = values.get(AUTH_PASSWORD_TEXT).getOrElse(throw new NoSuchElementException("Parameter \'" + AUTH_PASSWORD_TEXT + "\' is missing."))(0);
 		val auth = authenticate(user, password)
 				Ok("{\"token\":\"" + auth + "\"}");
 	}
