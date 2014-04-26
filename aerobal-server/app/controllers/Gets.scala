@@ -27,7 +27,7 @@ object Gets extends Controller {
 		case e: ForbiddenAccessException => { Forbidden(e.getMessage()) };
 		case e: NoSuchElementException => { BadRequest(e.getMessage()) };
 		case e: InternalServerErrorException => { InternalServerError(e.getMessage()) };
-		case e: Exception => { InternalServerError("Something went wrong...") }
+		case e: Exception => { e.printStackTrace(); InternalServerError("Something went wrong...") }
 		}
 	}
 	def session(id: Long) = Action { 
@@ -41,7 +41,7 @@ object Gets extends Controller {
 		} 
 		catch {
 		case e: NotFoundException => { NotFound(e.getMessage()) }
-		case e: Exception => { InternalServerError("Something went wrong...") }
+		case e: Exception => { e.printStackTrace(); InternalServerError("Something went wrong...") }
 		}
 	}
 
@@ -56,7 +56,7 @@ object Gets extends Controller {
 		}
 		catch {
 		case e: NotFoundException => { NotFound(e.getMessage()) }
-		case e: Exception => { InternalServerError("Something went wrong...") }
+		case e: Exception => { e.printStackTrace(); InternalServerError("Something went wrong...") }
 		}
 	}
 	def run(id: Long) = Action {	
@@ -70,7 +70,7 @@ object Gets extends Controller {
 		} 
 		catch {
 		case e: NotFoundException => { NotFound(e.getMessage()) }
-		case e: Exception => { InternalServerError("Something went wrong...") }
+		case e: Exception => { e.printStackTrace(); InternalServerError("Something went wrong...") }
 		}
 	}
 
@@ -85,7 +85,7 @@ object Gets extends Controller {
 		} 
 		catch {
 		case e: NotFoundException => { NotFound(e.getMessage()) }
-		case e: Exception => { InternalServerError("Something went wrong...") }
+		case e: Exception => { e.printStackTrace(); InternalServerError("Something went wrong...") }
 		}
 	}
 	def sessions = Action {
@@ -100,7 +100,7 @@ object Gets extends Controller {
 		} 
 		catch {
 		case e: NotFoundException => { NotFound(e.getMessage()) }
-		case e: Exception => { InternalServerError("Something went wrong...") }
+		case e: Exception => { e.printStackTrace(); InternalServerError("Something went wrong...") }
 		}
 
 	}
@@ -118,7 +118,7 @@ object Gets extends Controller {
 		} 
 		catch {
 		case e: NotFoundException => { NotFound(e.getMessage()) }
-		case e: Exception => { InternalServerError("Something went wrong...") }
+		case e: Exception => { e.printStackTrace(); InternalServerError("Something went wrong...") }
 		}
 	}
 	def runs(experimentId: Long) = Action {
@@ -135,7 +135,7 @@ object Gets extends Controller {
 		} 
 		catch {
 		case e: NotFoundException => { NotFound(e.getMessage()) }
-		case e: Exception => { InternalServerError("Something went wrong...") }
+		case e: Exception => { e.printStackTrace(); InternalServerError("Something went wrong...") }
 		}
 
 	}
@@ -153,7 +153,7 @@ object Gets extends Controller {
 		} 
 		catch {
 		case e: NotFoundException => { NotFound(e.getMessage()) }
-		case e: Exception => { InternalServerError("Something went wrong...") }
+		case e: Exception => { e.printStackTrace(); InternalServerError("Something went wrong...") }
 		}
 
 	}
@@ -339,8 +339,6 @@ object Gets extends Controller {
 			resultsList.foreach(x => tbrList.add(x.asInstanceOf[MeasurementDto]));
 			tbrList.toList;
 	}
-//	def getExperimentStats(experimentId: Long, token: String): Option
-
 	def getUserFromEmail(user: String): Option[UserDto] = {
 			val session = Application.sessionFactory.openSession();
 			val hql = "FROM UserDto U WHERE U.email = :user";
