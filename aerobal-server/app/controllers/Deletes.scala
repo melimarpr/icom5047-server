@@ -10,7 +10,7 @@ object Deletes extends Controller {
 		request => 
 		try {
 			val values = request.headers.toMap;
-			val token = values.getOrElse("token", throw new NoSuchElementException("No token found."))(0);
+			val token = values.getOrElse(Constants.TOKEN_TEXT, throw new NoSuchElementException("No token found."))(0);
 			if(Application.isSessionFromUser(sessionId, token)) {
 				throw new ForbiddenAccessException("Session does not belong to user or does not exist.");
 			}
@@ -27,7 +27,7 @@ object Deletes extends Controller {
 		request => 
 		try {
 			val values = request.headers.toMap;
-			val token = values.getOrElse("token", throw new NoSuchElementException("No token found."))(0);
+			val token = values.getOrElse(Constants.TOKEN_TEXT, throw new NoSuchElementException("No token found."))(0);
 			if(Application.isRunFromUser(runId, token)) {
 				throw new ForbiddenAccessException("Session does not belong to user or does not exist.");
 			}
@@ -45,7 +45,7 @@ object Deletes extends Controller {
 	  request => 
 		try {
 			val values = request.headers.toMap;
-			val token = values.getOrElse("token", throw new NoSuchElementException("No token found."))(0);
+			val token = values.getOrElse(Constants.TOKEN_TEXT, throw new NoSuchElementException("No token found."))(0);
 			if(Application.isExperimentFromUser(experimentId, token)) {
 				throw new ForbiddenAccessException("Session does not belong to user or does not exist.");
 			}
@@ -67,7 +67,7 @@ object Deletes extends Controller {
 					"AND (S.userId IN (select id from UserDto WHERE token = :token) OR S.isPublic = true)";
 			val query = session.createQuery(hql);
 			query.setParameter("sessionId", sessionId);
-			query.setString("token", token);
+			query.setString(Constants.TOKEN_TEXT, token);
 			val result = query.executeUpdate();
 			session.getTransaction().commit();
 			session.close();
@@ -84,7 +84,7 @@ object Deletes extends Controller {
 					"(SELECT id from UserDto WHERE token = :token) OR S.isPublic = true)))";
 			val query = session.createQuery(hql);
 			query.setParameter("runId", runId);
-			query.setString("token", token);
+			query.setString(Constants.TOKEN_TEXT, token);
 			val result = query.executeUpdate();
 			session.getTransaction().commit();
 			session.close();
@@ -99,14 +99,14 @@ object Deletes extends Controller {
 					"(select id from UserDto WHERE token = :token) OR S.isPublic = true))";
 			val query = session.createQuery(hql);
 			query.setParameter("experimentId", experimentId);
-			query.setString("token", token);
+			query.setString(Constants.TOKEN_TEXT, token);
 			val result = query.executeUpdate();
 			session.getTransaction().commit();
 			session.close();
 			result > 0
 	}
 	private def deleteExperiments(session: org.hibernate.Session, sessionId: Long, token: String) {
-		val experiments = Gets.getExperiments(sessionId, token);
+		val experiments = Gets.getExperiments(sessionId, token,false);
 		experiments.foreach(experiment => deleteRuns(session, experiment.id, token));
 		val hql = "UPDATE ExperimentDto E set isActive = false WHERE E.sessionId = :sessionId AND E.isActive = true";
 		val query = session.createQuery(hql);
@@ -114,7 +114,7 @@ object Deletes extends Controller {
 		val result = query.executeUpdate();
 	}
 	private def deleteRuns(session: org.hibernate.Session, experimentId: Long, token: String) {
-		val runs = Gets.getRuns(experimentId, token);
+		val runs = Gets.getRuns(experimentId, token,false);
 		runs.foreach(run => deleteMeasurements(session, run.id, token));
 		val hql = "UPDATE RunDto R set isActive = false WHERE R.experimentId = :experimentId AND R.isActive = true";
 		val query = session.createQuery(hql);

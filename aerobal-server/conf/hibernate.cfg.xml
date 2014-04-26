@@ -22,5 +22,7 @@
 		<mapping resource="orm/SessionDto.hbm.xml"></mapping>
 		<mapping resource="orm/MeasurementDto.hbm.xml"></mapping>
 		<mapping resource="orm/UserDto.hbm.xml"></mapping>
+		<mapping resource="orm/RunStatDto.hbm.xml"></mapping>
+		<mapping resource="orm/ExperimentStatDto.hbm.xml"></mapping>
 	</session-factory>
 </hibernate-configuration>

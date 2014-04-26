@@ -21,7 +21,7 @@ GET		/experiment							controllers.Gets.experiment(id: Long)
 GET		/run								controllers.Gets.run(id: Long)
 GET		/session							controllers.Gets.session(id: Long)
 GET		/user								controllers.Gets.user
-GET		/sessions							controllers.Gets.sessions(userId: Long)
+GET		/sessions							controllers.Gets.sessions
 GET		/experiments						controllers.Gets.experiments(sessionId: Long)
 GET		/runs								controllers.Gets.runs(experimentId: Long)
 GET		/measurements						controllers.Gets.measurements(runId: Long)

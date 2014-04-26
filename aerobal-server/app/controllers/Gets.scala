@@ -10,13 +10,15 @@ import com.google.gson.Gson
 import exceptions.InternalServerErrorException
 import exceptions.ForbiddenAccessException
 import javassist.NotFoundException
+import com.aerobal.data.serializers.GlobalGson
 
 object Gets extends Controller {
+  private val gson = GlobalGson.gson;
 	def user = Action {
 		request => 
 		try {
-			val values = request.headers.toMap;
-			val token = values.getOrElse(Constants.TOKEN_TEXT, throw new NoSuchElementException("No token found."))(0);
+			val headersMap = request.headers.toMap;
+			val token = headersMap.getOrElse(Constants.TOKEN_TEXT, throw new NoSuchElementException("No token found."))(0);
 			val userOpt = getUser(token);
 			val user = userOpt.getOrElse(throw new ForbiddenAccessException("Invalid token used."));
 			Ok(user.toString);
@@ -31,8 +33,8 @@ object Gets extends Controller {
 	def session(id: Long) = Action { 
 		request => 
 		try {
-			val values = request.headers.toMap;
-			val token = values.getOrElse(Constants.TOKEN_TEXT, List(""))(0);
+			val headersMap = request.headers.toMap;
+			val token = headersMap.getOrElse(Constants.TOKEN_TEXT, List(""))(0);
 			val sessionOpt = getSession(id, token);
 			val session = sessionOpt.getOrElse(throw new NotFoundException("Id=" + id + " not found."));
 			Ok(session.toString).as("application/json");
@@ -46,8 +48,8 @@ object Gets extends Controller {
 	def experiment(id: Long) = Action {
 		request => 
 		try {
-			val values = request.headers.toMap;
-			val token = values.getOrElse(Constants.TOKEN_TEXT, List(""))(0);
+			val headersMap = request.headers.toMap;
+			val token = headersMap.getOrElse(Constants.TOKEN_TEXT, List(""))(0);
 			val experimentOpt = getExperiment(id,token);
 			val experiment = experimentOpt.getOrElse(throw new NotFoundException("Id=" + id + " not found."));
 			Ok(experiment.toString).as("application/json");
@@ -60,8 +62,8 @@ object Gets extends Controller {
 	def run(id: Long) = Action {	
 		request => 
 		try {
-			val values = request.headers.toMap;
-			val token = values.getOrElse(Constants.TOKEN_TEXT, List(""))(0);
+			val headersMap = request.headers.toMap;
+			val token = headersMap.getOrElse(Constants.TOKEN_TEXT, List(""))(0);
 			val runOpt = getRun(id,token);
 			val run = runOpt.getOrElse(throw new NotFoundException("Id=" + id + " not found."));
 			Ok(run.toString).as("application/json");
@@ -75,8 +77,8 @@ object Gets extends Controller {
 	def measurement(id: Long) = Action {
 		request => 
 		try {
-			val values = request.headers.toMap;
-			val token = values.getOrElse(Constants.TOKEN_TEXT, List(""))(0);
+			val headersMap = request.headers.toMap;
+			val token = headersMap.getOrElse(Constants.TOKEN_TEXT, List(""))(0);
 			val measurementOpt = getMeasurement(id,token);
 			val measurement = measurementOpt.getOrElse(throw new NotFoundException("Id=" + id + " not found."));
 			Ok(measurement.toString).as("application/json");
@@ -86,17 +88,15 @@ object Gets extends Controller {
 		case e: Exception => { InternalServerError("Something went wrong...") }
 		}
 	}
-	def sessions(userId: Long) = Action {
+	def sessions = Action {
 		request =>
 		try {
-			val values = request.headers.toMap;
-			val token = values.getOrElse(Constants.TOKEN_TEXT, List(""))(0);
-			val userOpt = getUser(userId);
-			if(userOpt.isEmpty) {
-				throw new NotFoundException("Id=" + userId + " not found.")
-			}
-			val sessions = getSessions(userId,token);
-			Ok(new Gson().toJson(sessions.toArray)).as("application/json");
+			val headersMap = request.headers.toMap;
+			val token = headersMap.getOrElse(Constants.TOKEN_TEXT, List(""))(0);
+			val userOpt = getUser(token);
+			val user = userOpt.getOrElse(throw new NotFoundException("No user found."));
+			val sessions = getSessions(user.id,token,false);
+			Ok("{\"payload\":"+gson.toJson(sessions.toArray)+"}").as("application/json");
 		} 
 		catch {
 		case e: NotFoundException => { NotFound(e.getMessage()) }
@@ -107,14 +107,14 @@ object Gets extends Controller {
 	def experiments(sessionId: Long) = Action {
 		request =>
 		try {
-			val values = request.headers.toMap;
-			val token = values.getOrElse(Constants.TOKEN_TEXT, List(""))(0);
+			val headersMap = request.headers.toMap;
+			val token = headersMap.getOrElse(Constants.TOKEN_TEXT, List(""))(0);
 			val sessionOpt = getSession(sessionId,token);
 			if(sessionOpt.isEmpty) {
 				throw new NotFoundException("Id=" + sessionId + " not found.")
 			}
-			val experiments = getExperiments(sessionId, token);
-			Ok(new Gson().toJson(experiments.toArray)).as("application/json");
+			val experiments = getExperiments(sessionId, token, false);
+			Ok("{\"payload\":"+gson.toJson(experiments.toArray)+"}").as("application/json");
 		} 
 		catch {
 		case e: NotFoundException => { NotFound(e.getMessage()) }
@@ -124,14 +124,14 @@ object Gets extends Controller {
 	def runs(experimentId: Long) = Action {
 		request =>
 		try {
-			val values = request.headers.toMap;
-			val token = values.getOrElse(Constants.TOKEN_TEXT, List(""))(0);
+			val headersMap = request.headers.toMap;
+			val token = headersMap.getOrElse(Constants.TOKEN_TEXT, List(""))(0);
 			val experimentOpt = getExperiment(experimentId, token);
 			if(experimentOpt.isEmpty) {
 				throw new NotFoundException("Id=" + experimentId + " not found.")
 			}
-			val runs = getRuns(experimentId, token);
-			Ok(new Gson().toJson(runs.toArray)).as("application/json");
+			val runs = getRuns(experimentId, token,false);
+			Ok("{\"payload\":"+gson.toJson(runs.toArray)+"}").as("application/json");
 		} 
 		catch {
 		case e: NotFoundException => { NotFound(e.getMessage()) }
@@ -142,14 +142,14 @@ object Gets extends Controller {
 	def measurements(runId: Long) = Action {
 		request =>
 		try {
-			val values = request.headers.toMap;
-			val token = values.getOrElse(Constants.TOKEN_TEXT, List(""))(0);
+			val headersMap = request.headers.toMap;
+			val token = headersMap.getOrElse(Constants.TOKEN_TEXT, List(""))(0);
 			val runOpt = getExperiment(runId, token);
 			if(runOpt.isEmpty) {
 				throw new NotFoundException("Id=" + runId + " not found.")
 			}
-			val measurements = getMeasurements(runId, token);
-			Ok(new Gson().toJson(measurements.toArray)).as("application/json");
+			val measurements = getMeasurements(runId, token,false);
+			Ok("{\"payload\":"+gson.toJson(measurements.toArray)+"}").as("application/json");
 		} 
 		catch {
 		case e: NotFoundException => { NotFound(e.getMessage()) }
@@ -172,10 +172,10 @@ object Gets extends Controller {
 			val hql = "FROM UserDto U WHERE U.id = :userId AND U.isActive = true";
 			val query = session.createQuery(hql);
 			query.setLong("userId", userId);
-			val listResults = query.list();
+			val resultsList = query.list();
 			session.close();
-			if(!listResults.isEmpty()) {
-				Some(listResults.get(0).asInstanceOf[UserDto]);
+			if(!resultsList.isEmpty()) {
+				Some(resultsList.get(0).asInstanceOf[UserDto]);
 			}
 			else {
 				None
@@ -186,10 +186,10 @@ object Gets extends Controller {
 			val hql = "FROM UserDto U WHERE U.token = :token AND U.isActive = true";
 			val query = session.createQuery(hql);
 			query.setString(Constants.TOKEN_TEXT, token);
-			val listResults = query.list();
+			val resultsList = query.list();
 			session.close();
-			if(!listResults.isEmpty()) {
-				Some(listResults.get(0).asInstanceOf[UserDto]);
+			if(!resultsList.isEmpty()) {
+				Some(resultsList.get(0).asInstanceOf[UserDto]);
 			}
 			else {
 				None
@@ -198,14 +198,14 @@ object Gets extends Controller {
 	def getSession(sessionId: Long, token: String): Option[SessionDto] = {
 			val session = Application.sessionFactory.openSession();
 			val hql = "FROM SessionDto S WHERE S.id = :sessionId AND S.isActive = true " +  
-					"AND (S.userId IN (select id from UserDto WHERE token = :token) OR S.isPublic = true)";
+					"AND (S.userId IN (select id from UserDto WHERE token = :token) OR (S.isPublic = true AND :showPublic = true))";
 			val query = session.createQuery(hql);
 			query.setString(Constants.TOKEN_TEXT, token.trim());
 			query.setLong("sessionId", sessionId);
-			val listResults = query.list();
+			val resultsList = query.list();
 			session.close();
-			if(!listResults.isEmpty()) {
-				Some(listResults.get(0).asInstanceOf[SessionDto]);
+			if(!resultsList.isEmpty()) {
+				Some(resultsList.get(0).asInstanceOf[SessionDto]);
 			}
 			else {
 				None
@@ -215,14 +215,14 @@ object Gets extends Controller {
 			val session = Application.sessionFactory.openSession();
 			val hql = "SELECT E FROM ExperimentDto E, SessionDto S WHERE E.id = :experimentId AND E.isActive = true AND " + 
 					"(S.id = E.sessionId AND S.isActive = true and (S.userId IN " + 
-					"(select id from UserDto WHERE token = :token) OR S.isPublic = true))";
+					"(select id from UserDto WHERE token = :token) OR (S.isPublic = true AND :showPublic = true)))";
 			val query = session.createQuery(hql);
 			query.setLong("experimentId", experimentId);
 			query.setString(Constants.TOKEN_TEXT, token);
-			val listResults = query.list();
+			val resultsList = query.list();
 			session.close();
-			if(!listResults.isEmpty()) {
-				Some(listResults.get(0).asInstanceOf[ExperimentDto]);
+			if(!resultsList.isEmpty()) {
+				Some(resultsList.get(0).asInstanceOf[ExperimentDto]);
 			}
 			else {
 				None
@@ -233,14 +233,14 @@ object Gets extends Controller {
 			val hql = "SELECT R FROM RunDto R, ExperimentDto E, SessionDto S WHERE R.id = :runId AND R.isActive = true AND " + 
 					"(E.id = R.experimentId AND E.isActive = true AND " + 
 					"(S.id = E.sessionId AND S.isActive = true and (S.userId IN " + 
-					"(SELECT id from UserDto WHERE token = :token) OR S.isPublic = true)))";
+					"(SELECT id from UserDto WHERE token = :token) OR (S.isPublic = true AND :showPublic = true))))";
 			val query = session.createQuery(hql);
 			query.setLong("runId", runId);
 			query.setString(Constants.TOKEN_TEXT, token);
-			val listResults = query.list();
+			val resultsList = query.list();
 			session.close();
-			if(!listResults.isEmpty()) {
-				Some(listResults.get(0).asInstanceOf[RunDto]);
+			if(!resultsList.isEmpty()) {
+				Some(resultsList.get(0).asInstanceOf[RunDto]);
 			}
 			else {
 				None
@@ -253,14 +253,14 @@ object Gets extends Controller {
 					"(R.id = M.runId AND R.isActive = true AND " + 
 					"(E.id = R.experimentId AND E.isActive = true AND " + 
 					"(S.id = E.sessionId AND S.isActive = true and (S.userId IN " + 
-					"(SELECT id from UserDto WHERE token = :token) OR S.isPublic = true))))";
+					"(SELECT id from UserDto WHERE token = :token) OR (S.isPublic = true AND :showPublic = true)))))";
 			val query = session.createQuery(hql);
 			query.setLong("measurementId", measurementId);
 			query.setString(Constants.TOKEN_TEXT, token);
-			val listResults = query.list();
+			val resultsList = query.list();
 			session.close();
-			if(!listResults.isEmpty()) {
-				Some(listResults.get(0).asInstanceOf[MeasurementDto]);
+			if(!resultsList.isEmpty()) {
+				Some(resultsList.get(0).asInstanceOf[MeasurementDto]);
 			}
 			else {
 				None
@@ -270,83 +270,88 @@ object Gets extends Controller {
 			val session = Application.sessionFactory.openSession();
 			val hql = "FROM UserDto";
 			val query = session.createQuery(hql);
-			val results = query.list();
+			val resultsList = query.list();
 			val tbrList = new ListBuffer[UserDto]();
-			results.foreach(x => tbrList.add(x.asInstanceOf[UserDto]));
+			resultsList.foreach(x => tbrList.add(x.asInstanceOf[UserDto]));
 			tbrList.toList;
 	}
-	def getSessions(userId: Long,token: String): List[SessionDto] = {
+	def getSessions(userId: Long,token: String, showPublic: Boolean): List[SessionDto] = {
 			val session = Application.sessionFactory.openSession();
 			val hql = "FROM SessionDto S WHERE S.userId = :userId AND S.isActive = true AND " + 
 					" (S.userId IN " + 
-					"(select id from UserDto WHERE token = :token) OR S.isPublic = true)";
+					"(select id from UserDto WHERE token = :token) OR (S.isPublic = true AND :showPublic = true))";
 			val query = session.createQuery(hql);
 			query.setLong("userId", userId);
+			query.setBoolean("showPublic", showPublic);
 			query.setString(Constants.TOKEN_TEXT, token);
-			val listResults = query.list();
+			val resultsList = query.list();
 			session.close();
 			val tbrList = new ListBuffer[SessionDto]();
-			listResults.foreach(x => tbrList.add(x.asInstanceOf[SessionDto]));
+			resultsList.foreach(x => tbrList.add(x.asInstanceOf[SessionDto]));
 			tbrList.toList;
 	}
 
-	def getExperiments(sessionId: Long, token: String): List[ExperimentDto] = {
+	def getExperiments(sessionId: Long, token: String, showPublic: Boolean): List[ExperimentDto] = {
 			val session = Application.sessionFactory.openSession();
 			val hql = "SELECT E FROM ExperimentDto E, SessionDto S WHERE E.sessionId = :sessionId AND E.isActive = true AND " +
 					"(S.id = E.sessionId AND S.isActive = true and (S.userId IN " + 
-					"(select id from UserDto WHERE token = :token) OR S.isPublic = true))";
+					"(select id from UserDto WHERE token = :token) OR (S.isPublic = true AND :showPublic = true)))";
 			val query = session.createQuery(hql);
 			query.setLong("sessionId", sessionId);
+			query.setBoolean("showPublic", showPublic);
 			query.setString(Constants.TOKEN_TEXT, token);
-			val listResults = query.list();
+			val resultsList = query.list();
 			session.close();
 			val tbrList = new ListBuffer[ExperimentDto]();
-			listResults.foreach(x => tbrList.add(x.asInstanceOf[ExperimentDto]));
+			resultsList.foreach(x => tbrList.add(x.asInstanceOf[ExperimentDto]));
 			tbrList.toList;
 	}
-	def getRuns(experimentId: Long, token: String): List[RunDto] = {
+	def getRuns(experimentId: Long, token: String, showPublic: Boolean): List[RunDto] = {
 			val session = Application.sessionFactory.openSession();
 			val hql = "SELECT R FROM RunDto R, ExperimentDto E, SessionDto S  WHERE R.experimentId = :experimentId  AND R.isActive = true AND " +
 					"(E.id = R.experimentId AND E.isActive = true AND " + 
 					"(S.id = E.sessionId AND S.isActive = true and (S.userId IN " + 
-					"(SELECT id from UserDto WHERE token = :token) OR S.isPublic = true)))";
+					"(SELECT id from UserDto WHERE token = :token) OR (S.isPublic = true AND :showPublic = true))))";
 			val query = session.createQuery(hql);
 			query.setLong("experimentId", experimentId);
+			query.setBoolean("showPublic", showPublic);
 			query.setString(Constants.TOKEN_TEXT, token);
-			val listResults = query.list();
+			val resultsList = query.list();
 			session.close();
 			val tbrList = new ListBuffer[RunDto]();
-			listResults.foreach(x => tbrList.add(x.asInstanceOf[RunDto]));
+			resultsList.foreach(x => tbrList.add(x.asInstanceOf[RunDto]));
 			tbrList.toList;
 	}
-	def getMeasurements(runId: Long, token: String): List[MeasurementDto] = {
+	def getMeasurements(runId: Long, token: String, showPublic: Boolean): List[MeasurementDto] = {
 			val session = Application.sessionFactory.openSession();
 			val hql = "SELECT M FROM MeasurementDto M, RunDto R, ExperimentDto E, SessionDto S WHERE M.runId = :runId AND M.isActive = true AND " +
 					"(R.id = M.runId AND R.isActive = true AND " + 
 					"(E.id = R.experimentId AND E.isActive = true AND " + 
 					"(S.id = E.sessionId AND S.isActive = true and (S.userId IN " + 
-					"(SELECT id from UserDto WHERE token = :token) OR S.isPublic = true))))";
+					"(SELECT id from UserDto WHERE token = :token) OR (S.isPublic = true AND :showPublic = true)))))";
 			val query = session.createQuery(hql);
 			query.setLong("runId", runId);
+			query.setBoolean("showPublic", showPublic);
 			query.setString(Constants.TOKEN_TEXT, token);
-			val listResults = query.list();
+			val resultsList = query.list();
 			session.close();
 			val tbrList = new ListBuffer[MeasurementDto]();
-			listResults.foreach(x => tbrList.add(x.asInstanceOf[MeasurementDto]));
+			resultsList.foreach(x => tbrList.add(x.asInstanceOf[MeasurementDto]));
 			tbrList.toList;
 	}
+//	def getExperimentStats(experimentId: Long, token: String): Option
 
 	def getUserFromEmail(user: String): Option[UserDto] = {
 			val session = Application.sessionFactory.openSession();
 			val hql = "FROM UserDto U WHERE U.email = :user";
 			val query = session.createQuery(hql);
 			query.setString("user", user.trim());
-			val results = query.list();
+			val resultsList = query.list();
 			session.close();
-			if(results.isEmpty()) {
+			if(resultsList.isEmpty()) {
 				None
 			} else {
-				Some(results(0).asInstanceOf[UserDto]);
+				Some(resultsList(0).asInstanceOf[UserDto]);
 			}
 	}
 }
