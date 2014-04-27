@@ -198,7 +198,7 @@ object Gets extends Controller {
 	def getSession(sessionId: Long, token: String): Option[SessionDto] = {
 			val session = Application.sessionFactory.openSession();
 			val hql = "FROM SessionDto S WHERE S.id = :sessionId AND S.isActive = true " +  
-					"AND (S.userId IN (select id from UserDto WHERE token = :token) OR (S.isPublic = true AND :showPublic = true))";
+					"AND (S.userId IN (select id from UserDto WHERE token = :token) OR (S.isPublic = true))";
 			val query = session.createQuery(hql);
 			query.setString(Constants.TOKEN_TEXT, token.trim());
 			query.setLong("sessionId", sessionId);
@@ -215,7 +215,7 @@ object Gets extends Controller {
 			val session = Application.sessionFactory.openSession();
 			val hql = "SELECT E FROM ExperimentDto E, SessionDto S WHERE E.id = :experimentId AND E.isActive = true AND " + 
 					"(S.id = E.sessionId AND S.isActive = true and (S.userId IN " + 
-					"(select id from UserDto WHERE token = :token) OR (S.isPublic = true AND :showPublic = true)))";
+					"(select id from UserDto WHERE token = :token) OR (S.isPublic = true)))";
 			val query = session.createQuery(hql);
 			query.setLong("experimentId", experimentId);
 			query.setString(Constants.TOKEN_TEXT, token);
@@ -233,7 +233,7 @@ object Gets extends Controller {
 			val hql = "SELECT R FROM RunDto R, ExperimentDto E, SessionDto S WHERE R.id = :runId AND R.isActive = true AND " + 
 					"(E.id = R.experimentId AND E.isActive = true AND " + 
 					"(S.id = E.sessionId AND S.isActive = true and (S.userId IN " + 
-					"(SELECT id from UserDto WHERE token = :token) OR (S.isPublic = true AND :showPublic = true))))";
+					"(SELECT id from UserDto WHERE token = :token) OR (S.isPublic = true))))";
 			val query = session.createQuery(hql);
 			query.setLong("runId", runId);
 			query.setString(Constants.TOKEN_TEXT, token);
@@ -253,7 +253,7 @@ object Gets extends Controller {
 					"(R.id = M.runId AND R.isActive = true AND " + 
 					"(E.id = R.experimentId AND E.isActive = true AND " + 
 					"(S.id = E.sessionId AND S.isActive = true and (S.userId IN " + 
-					"(SELECT id from UserDto WHERE token = :token) OR (S.isPublic = true AND :showPublic = true)))))";
+					"(SELECT id from UserDto WHERE token = :token) OR (S.isPublic = true)))))";
 			val query = session.createQuery(hql);
 			query.setLong("measurementId", measurementId);
 			query.setString(Constants.TOKEN_TEXT, token);

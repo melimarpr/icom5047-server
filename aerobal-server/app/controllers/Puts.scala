@@ -16,8 +16,8 @@ object Puts extends Controller {
 	def update_experiment = Action { 
 		request => 
 		try {
-			val values = request.body.asFormUrlEncoded.getOrElse(throw new NoSuchElementException("No Form URL Encoded body supplied."));
-			val token = values.get(Constants.TOKEN_TEXT).getOrElse(throw new ForbiddenAccessException("No token passed."))(0);
+			val headersMap = request.headers.toMap;
+			val token = headersMap.getOrElse(Constants.TOKEN_TEXT, throw new NoSuchElementException("No token found."))(0);			val values = request.body.asFormUrlEncoded.getOrElse(throw new NoSuchElementException("No Form URL Encoded body supplied."));
 			val experimentId = values.get(Constants.EXPERIMENT_SELF_ID_TEXT).getOrElse(throw new NoSuchElementException("Parameter \'" + Constants.EXPERIMENT_SELF_ID_TEXT+ "\' is missing."))(0).toLong;
 			if(!Application.isExperimentFromUser(experimentId, token)) {
 				throw new ForbiddenAccessException("User does not have permission to modifiy this experiment.");
@@ -37,8 +37,8 @@ object Puts extends Controller {
 	def update_session = Action { 
 		request => 
 		try {
-			val values = request.body.asFormUrlEncoded.getOrElse(throw new NoSuchElementException("No Form URL Encoded body supplied."));
-			val token = values.get(Constants.TOKEN_TEXT).getOrElse(throw new ForbiddenAccessException("No token passed."))(0);
+			val headersMap = request.headers.toMap;
+			val token = headersMap.getOrElse(Constants.TOKEN_TEXT, throw new NoSuchElementException("No token found."))(0);			val values = request.body.asFormUrlEncoded.getOrElse(throw new NoSuchElementException("No Form URL Encoded body supplied."));
 			val sessionId = values.get(Constants.SESSION_SELF_ID_TEXT).getOrElse(throw new NoSuchElementException("Parameter \'" + Constants.SESSION_SELF_ID_TEXT + "\' is missing."))(0).toLong;
 			if(!Application.isSessionFromUser(sessionId, token)) {
 				throw new ForbiddenAccessException("User does not have permission to modifiy this session.");
@@ -65,8 +65,8 @@ object Puts extends Controller {
 	def update_user = Action { 
 		request =>
 		try {
-			val values = request.body.asFormUrlEncoded.getOrElse(throw new NoSuchElementException("No Form URL Encoded body supplied."));
-			val token = values.get(Constants.TOKEN_TEXT).getOrElse(throw new ForbiddenAccessException("No token passed."))(0);
+			val headersMap = request.headers.toMap;
+			val token = headersMap.getOrElse(Constants.TOKEN_TEXT, throw new NoSuchElementException("No token found."))(0);			val values = request.body.asFormUrlEncoded.getOrElse(throw new NoSuchElementException("No Form URL Encoded body supplied."));
 			val userOpt = Gets.getUser(token);
 			val user = userOpt.getOrElse(throw new ForbiddenAccessException("Invalid token."));
 			val nameOpt = values.get(Constants.USER_NAME_TEXT);
@@ -87,8 +87,8 @@ object Puts extends Controller {
 	def update_password = Action {
 		request =>
 		try {
-			val values = request.body.asFormUrlEncoded.getOrElse(throw new NoSuchElementException("No Form URL Encoded body supplied."));
-			val token = values.get(Constants.TOKEN_TEXT).getOrElse(throw new ForbiddenAccessException("No token passed."))(0);
+			val headersMap = request.headers.toMap;
+			val token = headersMap.getOrElse(Constants.TOKEN_TEXT, throw new NoSuchElementException("No token found."))(0);			val values = request.body.asFormUrlEncoded.getOrElse(throw new NoSuchElementException("No Form URL Encoded body supplied."));
 			val userOpt = Gets.getUser(token);
 			val user = userOpt.getOrElse(throw new ForbiddenAccessException("Invalid token."));
 			val currentPassword = values.get(Constants.UPDATE_PASSWORD_CURRENT_PASSWORD_TEXT).getOrElse(throw new NoSuchElementException("Parameter \'" + Constants.UPDATE_PASSWORD_CURRENT_PASSWORD_TEXT + "\' is missing."))(0);

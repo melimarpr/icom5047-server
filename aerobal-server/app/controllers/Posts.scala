@@ -13,6 +13,13 @@ import exceptions.ForbiddenAccessException
 import exceptions.InternalServerErrorException
 import javassist.NotFoundException
 import exceptions.InvalidPasswordException
+import com.aerobal.data.serializers.GlobalGson
+import com.aerobal.data.objects.Experiment
+import com.google.gson.GsonBuilder
+import com.aerobal.data.serializers.ExperimentSerializer
+import scala.collection.mutable.ListBuffer
+import com.aerobal.data.objects.Run
+import com.aerobal.data.objects.Measurement
 
 object Posts extends Controller {
 
@@ -36,8 +43,9 @@ object Posts extends Controller {
 	def newSession = Action { 
 		request => 
 		try {
+			val headersMap = request.headers.toMap;
+			val token = headersMap.getOrElse(Constants.TOKEN_TEXT, throw new NoSuchElementException("No token found."))(0);
 			val values = request.body.asFormUrlEncoded.getOrElse(throw new NoSuchElementException("No Form URL Encoded body supplied."));
-			val token = values.get(Constants.TOKEN_TEXT).getOrElse(throw new ForbiddenAccessException("No token passed."))(0);
 			val user = Gets.getUser(token).getOrElse(throw new ForbiddenAccessException("Invalid token."));
 			val name = values.get(Constants.SESSION_NAME_TEXT).getOrElse(throw new NoSuchElementException("Parameter \'" + Constants.SESSION_NAME_TEXT + "\' is missing."))(0);
 			val desc = values.get(Constants.SESSION_DESCRIPTION_TEXT).getOrElse(throw new NoSuchElementException("Parameter \'" + Constants.SESSION_DESCRIPTION_TEXT + "\' is missing."))(0);
@@ -57,8 +65,8 @@ object Posts extends Controller {
 	def newExperiment = Action { 
 		request => 
 		try {
-			val values = request.body.asFormUrlEncoded.getOrElse(throw new NoSuchElementException("No Form URL Encoded body supplied."));
-			val token = values.get(Constants.TOKEN_TEXT).getOrElse(throw new ForbiddenAccessException("No token passed."))(0);
+			val headersMap = request.headers.toMap;
+			val token = headersMap.getOrElse(Constants.TOKEN_TEXT, throw new NoSuchElementException("No token found."))(0);			val values = request.body.asFormUrlEncoded.getOrElse(throw new NoSuchElementException("No Form URL Encoded body supplied."));
 			val sessionId = values.get(Constants.EXPERIMENT_SESSION_ID_TEXT).getOrElse(throw new NoSuchElementException("Parameter \'" + Constants.EXPERIMENT_SESSION_ID_TEXT + "\' is missing."))(0).toLong;
 			if(!Application.isSessionFromUser(sessionId, token)) { 
 				throw new ForbiddenAccessException("Session does not belong to user.")
@@ -83,8 +91,9 @@ object Posts extends Controller {
 	def newRun = Action { 
 		request => 
 		try {
+			val headersMap = request.headers.toMap;
+			val token = headersMap.getOrElse(Constants.TOKEN_TEXT, throw new NoSuchElementException("No token found."))(0);
 			val values = request.body.asFormUrlEncoded.getOrElse(throw new NoSuchElementException("No Form URL Encoded body supplied."));
-			val token = values.get(Constants.TOKEN_TEXT).getOrElse(throw new ForbiddenAccessException("No token passed."))(0);
 			val experimentId = values.get(Constants.RUN_EXPERIMENT_ID_TEXT).getOrElse(throw new NoSuchElementException("Parameter \'" + Constants.RUN_EXPERIMENT_ID_TEXT + "\' is missing."))(0).toLong;
 			if(!Application.isExperimentFromUser(experimentId, token)) {
 				throw new ForbiddenAccessException("Run does not belong to user.");
@@ -104,9 +113,9 @@ object Posts extends Controller {
 	def newMeasurement = Action { 
 		request => 
 		try {
-			val values = request.body.asFormUrlEncoded.getOrElse(throw new NoSuchElementException("No Form URL Encoded body supplied."));
+			val headersMap = request.headers.toMap;
+			val token = headersMap.getOrElse(Constants.TOKEN_TEXT, throw new NoSuchElementException("No token found."))(0);			val values = request.body.asFormUrlEncoded.getOrElse(throw new NoSuchElementException("No Form URL Encoded body supplied."));
 			val runId = values.get(Constants.MEASUREMENT_RUN_ID_TEXT).getOrElse(throw new NoSuchElementException("Parameter \'" + Constants.MEASUREMENT_RUN_ID_TEXT + "\' is missing."))(0).toLong;
-			val token = values.get(Constants.TOKEN_TEXT).getOrElse(throw new ForbiddenAccessException("No token passed."))(0);
 			if(!Application.isRunFromUser(runId, token)) {
 				throw new ForbiddenAccessException("Run does not belong to user.");
 			}
@@ -115,6 +124,26 @@ object Posts extends Controller {
 			val measurementOpt = addMeasurement(runId, typeOf, value, token);
 			val measurement = measurementOpt.getOrElse(throw new InternalServerErrorException("Something went wrong..."));
 			Ok(measurementOpt.get.toString).as("application/json");
+		}
+		catch {
+		case e: ForbiddenAccessException => { Forbidden(e.getMessage()) };
+		case e: NoSuchElementException => { BadRequest(e.getMessage()) };
+		case e: InternalServerErrorException => { InternalServerError(e.getMessage()) };
+		case e: Exception => { InternalServerError("Something went wrong...") };
+		}
+	}
+
+	def submitExperiment = Action {
+		request => 
+		try {
+			val headersMap = request.headers.toMap;
+			val token = headersMap.getOrElse(Constants.TOKEN_TEXT, throw new NoSuchElementException("No token found."))(0);	
+			val sessionId = headersMap.getOrElse(Constants.EXPERIMENT_SESSION_ID_TEXT, throw new NoSuchElementException("No Session ID provided in header."))(0).toLong;
+			val values = request.body.asText.getOrElse(throw new NoSuchElementException("No body supplied."));
+			val gson = new GsonBuilder().registerTypeAdapter(classOf[Experiment], ExperimentSerializer).create();
+			val experiment = gson.fromJson(values, classOf[Experiment]);
+			val newExperiment = addExperiment(sessionId, experiment, token).getOrElse(throw new InternalServerErrorException("Something went wrong..."));
+			Ok(newExperiment.toString);
 		}
 		catch {
 		case e: ForbiddenAccessException => { Forbidden(e.getMessage()) };
@@ -181,14 +210,17 @@ object Posts extends Controller {
 			}
 	}
 	def addExperiment(sessionId: Long, name: String, amountOfValues: Int, frequency: Int, windSpeed: Double, token: String): Option[ExperimentDto] = {
-			val session = Gets.getSession(sessionId, token);
+			val experimentDto = new ExperimentDto();
+			experimentDto.sessionId = sessionId;
+			experimentDto.name = name;
+			experimentDto.amountOfValues = amountOfValues;
+			experimentDto.frequency = frequency;
+			experimentDto.windSpeed = windSpeed;
+			addExperiment(experimentDto, token);
+	}
+	def addExperiment(experimentDto: ExperimentDto, token: String): Option[ExperimentDto] = {
+			val session = Gets.getSession(experimentDto.sessionId, token);
 			if(session.isDefined) {
-				val experimentDto = new ExperimentDto();
-				experimentDto.sessionId = sessionId;
-				experimentDto.name = name;
-				experimentDto.amountOfValues = amountOfValues;
-				experimentDto.frequency = frequency;
-				experimentDto.windSpeed = windSpeed;
 				val openSession = Application.sessionFactory.openSession();
 				openSession.beginTransaction();
 				val serial = openSession.save(experimentDto);
@@ -200,11 +232,29 @@ object Posts extends Controller {
 				None
 			}
 	}
+	def addExperiment(sessionId: Long, experiment: Experiment, token: String): Option[Experiment] = {
+			val experimentDto = new ExperimentDto();
+			experimentDto.sessionId = sessionId;
+			experimentDto.name = experiment.name;
+			experimentDto.amountOfValues = experiment.amountOfValues;
+			experimentDto.frequency = experiment.frequency;
+			experimentDto.windSpeed = experiment.windSpeed;
+			val newExperiment = new Experiment(addExperiment(experimentDto, token).getOrElse(return None));
+			val list = new ListBuffer[Option[Run]]();
+			experiment.runs.foreach(run => list.append(addRun(newExperiment.id, run, token)));
+			list.foreach(runOpt => if(runOpt.isDefined) { newExperiment.runs.append(runOpt.get) });
+			Some(newExperiment);
+	}
 	def addRun(experimentId: Long, token: String): Option[RunDto] = {
-			val experiment = Gets.getExperiment(experimentId, token);
+
+			val runDto = new RunDto();
+			runDto.experimentId = experimentId;
+			addRun(runDto, token);
+	}
+	def addRun(runDto: RunDto, token: String): Option[RunDto] = {
+			val experiment = Gets.getExperiment(runDto.experimentId, token);
 			if(experiment.isDefined) {
-				val runDto = new RunDto();
-				runDto.experimentId = experimentId;
+
 				val openSession = Application.sessionFactory.openSession();
 				openSession.beginTransaction();
 				val serial = openSession.save(runDto);
@@ -216,13 +266,25 @@ object Posts extends Controller {
 				None;
 			}
 	}
+	def addRun(experimentId: Long, run: Run, token: String): Option[Run] = {
+			val runDto = new RunDto();
+			runDto.experimentId = experimentId;
+			val newRun = new Run(addRun(runDto, token).getOrElse(return None));
+			val list = new ListBuffer[Option[Measurement]]();
+			run.measurements.foreach(measurement => list.append(addMeasurement(newRun.id, measurement,token)));
+			list.foreach(measurementOpt => if(measurementOpt.isDefined) { newRun.measurements.append(measurementOpt.get) });
+			Some(newRun);
+	}
 	def addMeasurement(runId: Long, measurementTypeId: Integer, value: Double,token: String): Option[MeasurementDto] = {
-			val run = Gets.getRun(runId, token);
+			val measurementDto = new MeasurementDto();
+			measurementDto.runId = runId;
+			measurementDto.measurementTypeId = measurementTypeId;
+			measurementDto.value = value;
+			addMeasurement(measurementDto, token);
+	}
+	def addMeasurement(measurementDto: MeasurementDto, token: String): Option[MeasurementDto] = {
+			val run = Gets.getRun(measurementDto.runId, token);
 			if(run.isDefined) {
-				val measurementDto = new MeasurementDto();
-				measurementDto.runId = runId;
-				measurementDto.measurementTypeId = measurementTypeId;
-				measurementDto.value = value;
 				val openSession = Application.sessionFactory.openSession();
 				openSession.beginTransaction();
 				val serial = openSession.save(measurementDto);
@@ -231,6 +293,15 @@ object Posts extends Controller {
 				Some(measurement.getOrElse(null));
 			}
 			else None
+	}
+	def addMeasurement(runId: Long, measurement: Measurement, token: String): Option[Measurement] = {
+			val measurementDto = new MeasurementDto();
+			measurementDto.runId = runId;
+			measurementDto.measurementTypeId = measurement.typeOf.id;
+			measurementDto.value = measurement.value;
+			measurementDto.timestamp = measurement.timestamp;
+			val newMeasurement = new Measurement(addMeasurement(measurementDto, token).getOrElse(return None));
+			Some(newMeasurement);
 	}
 	def authenticate(user: String, password: String): String = {
 			val userOpt = Gets.getUserFromEmail(user);
