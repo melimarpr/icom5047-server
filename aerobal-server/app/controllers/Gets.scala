@@ -144,7 +144,7 @@ object Gets extends Controller {
 		try {
 			val headersMap = request.headers.toMap;
 			val token = headersMap.getOrElse(Constants.TOKEN_TEXT, List(""))(0);
-			val runOpt = getExperiment(runId, token);
+			val runOpt = getRun(runId, token);
 			if(runOpt.isEmpty) {
 				throw new NotFoundException("Id=" + runId + " not found.")
 			}
