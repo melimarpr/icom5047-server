@@ -139,9 +139,9 @@ object Posts extends Controller {
 			val headersMap = request.headers.toMap;
 			val token = headersMap.getOrElse(Constants.TOKEN_TEXT, throw new NoSuchElementException("No token found."))(0);	
 			val sessionId = headersMap.getOrElse(Constants.EXPERIMENT_SESSION_ID_TEXT, throw new NoSuchElementException("No Session ID provided in header."))(0).toLong;
-			val values = request.body.asText.getOrElse(throw new NoSuchElementException("No body supplied."));
+			val values = request.body.asJson.getOrElse(throw new NoSuchElementException("No body supplied."));
 			val gson = new GsonBuilder().registerTypeAdapter(classOf[Experiment], ExperimentSerializer).create();
-			val experiment = gson.fromJson(values, classOf[Experiment]);
+			val experiment = gson.fromJson(values.toString, classOf[Experiment]);
 			val newExperiment = addExperiment(sessionId, experiment, token).getOrElse(throw new InternalServerErrorException("Something went wrong..."));
 			Ok(newExperiment.toString);
 		}
