@@ -12,8 +12,7 @@ GET     /my_sessions                        controllers.Website.sessions
 GET     /browse                             controllers.Website.browse
 GET     /no_session                         controllers.Website.no_session
 GET     /logout                             controllers.Website.logout
-GET    /search_sessions                    controllers.Website.session_search
-
+GET     /search_sessions                    controllers.Website.session_search
 
 # GET
 GET		/measurement						controllers.Gets.measurement(id: Long)
@@ -26,6 +25,7 @@ GET		/experiments						controllers.Gets.experiments(sessionId: Long)
 GET		/runs								controllers.Gets.runs(experimentId: Long)
 GET		/measurements						controllers.Gets.measurements(runId: Long)
 GET		/users								controllers.Gets.users
+GET		/full_experiment								controllers.Gets.fullExperiment(id: Long)
 
 #Posts
 POST	/new_user							controllers.Posts.newUser

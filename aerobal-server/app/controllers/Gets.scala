@@ -11,9 +11,12 @@ import exceptions.InternalServerErrorException
 import exceptions.ForbiddenAccessException
 import javassist.NotFoundException
 import com.aerobal.data.serializers.GlobalGson
+import com.aerobal.data.objects.Experiment
+import com.aerobal.data.objects.Run
+import com.aerobal.data.objects.Measurement
 
 object Gets extends Controller {
-  private val gson = GlobalGson.gson;
+	private val gson = GlobalGson.gson;
 	def user = Action {
 		request => 
 		try {
@@ -167,6 +170,20 @@ object Gets extends Controller {
 			NotFound("No users found.");
 		} 
 	}
+	def fullExperiment(id: Long) = Action {
+		request => 
+		try {
+			val headersMap = request.headers.toMap;
+			val token = headersMap.getOrElse(Constants.TOKEN_TEXT, List(""))(0);
+			val experimentOpt = getDeepExperiment(id,token);
+			val experiment = experimentOpt.getOrElse(throw new NotFoundException("Id=" + id + " not found."));
+			Ok(experiment.toString).as("application/json");
+		}
+		catch {
+		case e: NotFoundException => { NotFound(e.getMessage()) }
+		case e: Exception => { e.printStackTrace(); InternalServerError("Something went wrong...") }
+		}
+	}
 	def getUser(userId: Long): Option[UserDto] = {
 			val session = Application.sessionFactory.openSession();
 			val hql = "FROM UserDto U WHERE U.id = :userId AND U.isActive = true";
@@ -225,8 +242,28 @@ object Gets extends Controller {
 				Some(resultsList.get(0).asInstanceOf[ExperimentDto]);
 			}
 			else {
-				None
+				None;
 			}
+	}
+	def getDeepExperiment(experimentId: Long, token: String): Option[Experiment] = { 
+			val experimentDto = getExperiment(experimentId, token).getOrElse(return None);
+			val experiment = new Experiment(experimentDto);
+			val runDtos = getRuns(experimentId,token, false);
+			runDtos.foreach(runDto => {
+				val runOpt = getDeepRun(runDto.id, token); 
+				if(runOpt.isDefined) {
+					experiment.runs.append(runOpt.get);
+				}
+			});
+			Some(experiment);
+	}
+
+	def getDeepRun(runId: Long, token: String): Option[Run] = {
+			val runDto = getRun(runId, token: String).getOrElse(return None);
+			val run = new Run(runDto);
+			val measurementDtos = getMeasurements(runId, token, false);
+			measurementDtos.foreach(measurement =>  run.measurements.append(new Measurement(measurement)));
+			Some(run);
 	}
 	def getRun(runId: Long,token: String): Option[RunDto] = {
 			val session = Application.sessionFactory.openSession();
