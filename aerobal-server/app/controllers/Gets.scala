@@ -389,4 +389,18 @@ object Gets extends Controller {
 				Some(resultsList(0).asInstanceOf[UserDto]);
 			}
 	}
+	def getExperimentFromSessionIdAndName(sessionId: Long, name: String): Option[ExperimentDto] = {
+			val session = Application.sessionFactory.openSession();
+			val hql = "FROM ExperimentDto E WHERE E.sessionId = :sessionId AND E.name = :name";
+			val query = session.createQuery(hql);
+			query.setString("name", name);
+			query.setLong("sessionId", sessionId);
+			val resultsList = query.list();
+			session.close();
+			if(resultsList.isEmpty()) {
+				None
+			} else {
+				Some(resultsList(0).asInstanceOf[ExperimentDto]);
+			}
+	}
 }

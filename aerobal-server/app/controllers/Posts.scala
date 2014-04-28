@@ -20,6 +20,7 @@ import com.aerobal.data.serializers.ExperimentSerializer
 import scala.collection.mutable.ListBuffer
 import com.aerobal.data.objects.Run
 import com.aerobal.data.objects.Measurement
+import exceptions.InvalidRequestException
 
 object Posts extends Controller {
 
@@ -133,7 +134,7 @@ object Posts extends Controller {
 		}
 	}
 
-	def submitExperiment = Action {
+	def submit_experiment = Action {
 		request => 
 		try {
 			val headersMap = request.headers.toMap;
@@ -142,11 +143,16 @@ object Posts extends Controller {
 			val values = request.body.asJson.getOrElse(throw new NoSuchElementException("No body supplied."));
 			val gson = new GsonBuilder().registerTypeAdapter(classOf[Experiment], ExperimentSerializer).create();
 			val experiment = gson.fromJson(values.toString, classOf[Experiment]);
-			val newExperiment = addExperiment(sessionId, experiment, token).getOrElse(throw new InternalServerErrorException("Something went wrong..."));
+			val experimentExistsOpt = Gets.getExperimentFromSessionIdAndName(sessionId, experiment.name);
+			if(experimentExistsOpt.isDefined && experiment.id < 1) {
+				throw new InvalidRequestException("Name \'" + experiment.name + "' already exists for session with ID = " + sessionId);
+			}
+			val newExperiment = submitExperiment(sessionId, experiment, token).getOrElse(throw new InternalServerErrorException("Something went wrong..."));
 			Ok(newExperiment.toString);
 		}
 		catch {
 		case e: ForbiddenAccessException => { Forbidden(e.getMessage()) };
+		case e: InvalidRequestException => { BadRequest(e.getMessage()) };
 		case e: NoSuchElementException => { BadRequest(e.getMessage()) };
 		case e: InternalServerErrorException => { InternalServerError(e.getMessage()) };
 		case e: Exception => { InternalServerError("Something went wrong...") };
@@ -232,19 +238,7 @@ object Posts extends Controller {
 				None
 			}
 	}
-	def addExperiment(sessionId: Long, experiment: Experiment, token: String): Option[Experiment] = {
-			val experimentDto = new ExperimentDto();
-			experimentDto.sessionId = sessionId;
-			experimentDto.name = experiment.name;
-			experimentDto.amountOfValues = experiment.amountOfValues;
-			experimentDto.frequency = experiment.frequency;
-			experimentDto.windSpeed = experiment.windSpeed;
-			val newExperiment = new Experiment(addExperiment(experimentDto, token).getOrElse(return None));
-			val list = new ListBuffer[Option[Run]]();
-			experiment.runs.foreach(run => list.append(addRun(newExperiment.id, run, token)));
-			list.foreach(runOpt => if(runOpt.isDefined) { newExperiment.runs.append(runOpt.get) });
-			Some(newExperiment);
-	}
+
 	def addRun(experimentId: Long, token: String): Option[RunDto] = {
 
 			val runDto = new RunDto();
@@ -266,15 +260,7 @@ object Posts extends Controller {
 				None;
 			}
 	}
-	def addRun(experimentId: Long, run: Run, token: String): Option[Run] = {
-			val runDto = new RunDto();
-			runDto.experimentId = experimentId;
-			val newRun = new Run(addRun(runDto, token).getOrElse(return None));
-			val list = new ListBuffer[Option[Measurement]]();
-			run.measurements.foreach(measurement => list.append(addMeasurement(newRun.id, measurement,token)));
-			list.foreach(measurementOpt => if(measurementOpt.isDefined) { newRun.measurements.append(measurementOpt.get) });
-			Some(newRun);
-	}
+
 	def addMeasurement(runId: Long, measurementTypeId: Integer, value: Double,token: String): Option[MeasurementDto] = {
 			val measurementDto = new MeasurementDto();
 			measurementDto.runId = runId;
@@ -294,15 +280,7 @@ object Posts extends Controller {
 			}
 			else None
 	}
-	def addMeasurement(runId: Long, measurement: Measurement, token: String): Option[Measurement] = {
-			val measurementDto = new MeasurementDto();
-			measurementDto.runId = runId;
-			measurementDto.measurementTypeId = measurement.typeOf.id;
-			measurementDto.value = measurement.value;
-			measurementDto.timestamp = measurement.timestamp;
-			val newMeasurement = new Measurement(addMeasurement(measurementDto, token).getOrElse(return None));
-			Some(newMeasurement);
-	}
+
 	def authenticate(user: String, password: String): String = {
 			val userOpt = Gets.getUserFromEmail(user);
 			if(userOpt.isDefined) {
@@ -316,6 +294,72 @@ object Posts extends Controller {
 			else {
 				"NOTFOUND"
 			}
+	}
+		def submitExperiment(sessionId: Long, experiment: Experiment, token: String): Option[Experiment] = {
+			val newExperiment = 
+					if(experiment.id > 0) {
+						val experimentOpt = Gets.getExperiment(experiment.id, token);
+						if(experimentOpt.isDefined) {
+							new Experiment(experimentOpt.get);;
+						}
+						else {
+							return None
+						}
+					} else {
+						val experimentDto = new ExperimentDto();
+						experimentDto.sessionId = sessionId;
+						experimentDto.name = experiment.name;
+						experimentDto.amountOfValues = experiment.amountOfValues;
+						experimentDto.frequency = experiment.frequency;
+						experimentDto.windSpeed = experiment.windSpeed;
+						new Experiment(addExperiment(experimentDto, token).getOrElse(return None))
+					}
+
+			val list = new ListBuffer[Option[Run]]();
+			experiment.runs.foreach(run => list.append(submitRun(newExperiment.id, run, token)));
+			list.foreach(runOpt => if(runOpt.isDefined) { newExperiment.runs.append(runOpt.get) });
+			Some(newExperiment);
+	}
+		def submitRun(experimentId: Long, run: Run, token: String): Option[Run] = {
+			val newRun = 
+					if(run.id > 0) {
+						val runOpt = Gets.getRun(run.id, token);
+						if(runOpt.isDefined) {
+							new Run(runOpt.get);;;;
+						}
+						else {
+							return None
+						}
+					} else {
+						val runDto = new RunDto();
+						runDto.experimentId = experimentId;
+						new Run(addRun(runDto, token).getOrElse(return None));
+					}
+			val list = new ListBuffer[Option[Measurement]]();
+			run.measurements.foreach(measurement => list.append(submitMeasurement(newRun.id, measurement,token)));
+			list.foreach(measurementOpt => if(measurementOpt.isDefined) { newRun.measurements.append(measurementOpt.get) });
+			Some(newRun);
+	}
+		def submitMeasurement(runId: Long, measurement: Measurement, token: String): Option[Measurement] = {
+			val newMeasurement = 
+					if(measurement.id > 0) {
+						val measurementOpt = Gets.getMeasurement(measurement.id, token);
+						if(measurementOpt.isDefined) {
+							new Measurement(measurementOpt.get);;
+						}
+						else {
+							return None
+						}
+					} else {
+						val measurementDto = new MeasurementDto();
+						measurementDto.runId = runId;
+						measurementDto.measurementTypeId = measurement.typeOf.id;
+						measurementDto.value = measurement.value;
+						measurementDto.timestamp = measurement.timestamp;
+						new Measurement(addMeasurement(measurementDto, token).getOrElse(return None));
+					}
+
+			Some(newMeasurement);
 	}
 
 
