@@ -7,10 +7,11 @@ GET     /                           		controllers.Website.index
 POST    /auth_website                       controllers.Website.authWebsite
 GET     /login                              controllers.Website.login
 GET     /panel                              controllers.Website.panel
-
-
 GET     /settings                           controllers.Website.settings
 GET     /main                               controllers.Website.main
+POST    /update_profile                     controllers.Website.update_profile
+POST    /update_password_website            controllers.Website.update_password
+
 GET     /my_sessions                        controllers.Website.sessions
 GET     /browse                             controllers.Website.browse
 GET     /no_session                         controllers.Website.no_session
