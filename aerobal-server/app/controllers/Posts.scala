@@ -159,6 +159,8 @@ object Posts extends Controller {
 		}
 	}
 
+
+
 	def auth = Action {
 		request => 
 		try {
@@ -361,6 +363,5 @@ object Posts extends Controller {
 
 			Some(newMeasurement);
 	}
-
 
 }

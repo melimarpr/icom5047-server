@@ -35,4 +35,12 @@ object Constants {
 	
 	val UPDATE_PASSWORD_CURRENT_PASSWORD_TEXT = "current";
 	val UPDATE_PASSWORD_NEW_PASSWORD_TEXT = "new";
+
+
+  /**
+   * Website Constants
+   */
+  val WEB_SESSION_TOKEN_KEY = "tokenKey";
+
+
 }

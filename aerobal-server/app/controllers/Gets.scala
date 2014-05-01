@@ -33,6 +33,12 @@ object Gets extends Controller {
 		case e: Exception => { e.printStackTrace(); InternalServerError("Something went wrong...") }
 		}
 	}
+
+  def forgotPassword(email: String) = Action {
+    request =>
+      Ok("Forgot");
+  }
+
 	def session(id: Long) = Action { 
 		request => 
 		try {

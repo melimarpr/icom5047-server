@@ -11,13 +11,18 @@
     <!-- Add CSS -->
 
     <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.4.2/pure-min.css">
-    <link rel="stylesheet" href="assets/css/aerobal.css" />
+    <link rel="stylesheet" href="assets/css/aerobal-login.css" />
+    <link href="assets/css/spinner.css" rel="stylesheet"   />
+    <link href="assets/css/messageboxes.css" rel="stylesheet">
+    <link href="assets/css/jquery-ui-1.10.4.custom.css" rel="stylesheet">
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
     <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
     <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
+
+    <!-- JS -->
 
 </head>
 <body>
@@ -49,21 +54,31 @@
 
             </div>
 
-            <!-- Register Div -->
+            <!-- Waiting Div -->
+            <div id="loading-cont" style="display:none;">
+                <div id="loading" class="loader">Processing...</div>
+            </div>
+
+
+            <!-- Log-In Div -->
             <div id="login-cont" style="display:none; ">
                 <div class="pure-g">
                     <div class="pure-u-1-5">
                         <a href="#" class="btn-back"><img src="assets/img/backbtn.png" /></a>
                     </div>
                     <div class="pure-u-4-5" >
-                        <form class="pure-form">
-                            <input type="email" placeholder="Email">
-                            <input class="input=box" type="password" placeholder="Password">
+                        <form class="pure-form" method="post" action="javascript:login()">
+                            <fieldset>
+                                <input id="login-email" type="email" placeholder="Email" name="user" required>
+                                <input id="login-password" class="input=box" type="password" placeholder="Password" name="password"  required>
+                                <br />
+                                <button type="submit" class="pure-button btn-sign-in">Sign in</button>
+                                <a id="btn-forgot" href="#" class="terms">Forgot Password</a>
+
+                            </fieldset>
                         </form>
+                        <div id="login-error" class="error" style="margin:10px 10px 10px 0px; display:none;">Error</div>
 
-
-                        <button type="submit" class="pure-button btn-sign-in">Sign in</button>
-                        <a id="btn-forgot" href="#" >Forgot Password</a>
                     </div>
                 </div>
             </div>
@@ -75,10 +90,14 @@
                         <a href="#" class="btn-back"><img src="assets/img/backbtn.png" /></a>
                     </div>
                     <div class="pure-u-4-5" >
-                        <form class="pure-form">
-                            <input type="email" placeholder="Email" style="width:90%;">
+                        <form class="pure-form" method="get" action="javascript:forgotPass()">
+                            <fieldset>
+                                <input id="forgot-email" type="email" placeholder="Email" style="width:90%;" required>
+                                <br />
+                                <button id="btn-send" type="submit" class="pure-button btn-sign-in">Send</button>
+                            </fieldset>
                         </form>
-                        <button type="submit" class="pure-button btn-sign-in">Send</button>
+
                     </div>
                 </div>
             </div>
@@ -90,27 +109,30 @@
                         <a href="#" class="btn-back"><img src="assets/img/backbtn.png" /></a>
                     </div>
                     <div class="pure-u-4-5" >
-                        <form class="pure-form pure-form-aligned">
+                        <form class="pure-form pure-form-aligned" action="javascript:register()">
                             <fieldset>
                                 <div class="pure-control-group">
-                                    <label for="email">Email Address</label>
-                                    <input id="email" type="email" placeholder="Email Address">
-                                </div>
-
-                                <div class="pure-control-group">
-                                    <label for="password">Password</label>
-                                    <input id="password" type="password" placeholder="Password">
+                                    <label for="register-email">Email Address</label>
+                                    <input id="register-email" type="email" placeholder="Email Address" required>
                                 </div>
                                 <div class="pure-control-group">
-                                    <label for="password">Confirm Password</label>
-                                    <input id="confirm-password" type="password" placeholder="Password">
+                                    <label for="register-name">Name Address</label>
+                                    <input id="register-name" type="text" placeholder="Full Name" required>
+                                </div>
+                                <div class="pure-control-group">
+                                    <label for="register-password">Password</label>
+                                    <input id="register-password" type="password" placeholder="Password" required>
+                                </div>
+                                <div class="pure-control-group">
+                                    <label for="register-confirm-password">Confirm Password</label>
+                                    <input id="register-confirm-password" type="password" placeholder="Password" required>
                                 </div>
 
                                 <div class="pure-controls">
                                     <label for="cb" class="pure-checkbox">
-                                        <input id="cb" type="checkbox"> I've read the <a class="terms" href="#">terms and conditions</a>
+                                        <input id="cb" type="checkbox" required> I've read the <a id="terms" class="terms" href="#">terms and conditions</a>
                                     </label>
-
+                                    <div id="register-error" class="error" style="margin:10px 10px 10px 0px; display:none;">Passwords Don't Match</div>
                                     <button id="btn-complete-register" type="submit" class="pure-button btn-sign-in">Submit</button>
                                 </div>
                             </fieldset>
@@ -125,8 +147,8 @@
                     <div class="pure-u-1-5">
                         <a href="#" class="btn-back"><img src="assets/img/backbtn.png" /></a>
                     </div>
-                    <div class="pure-u-4-5"  >
-                        <span class="registration-successful">Congrats. An email has been send to confirm registration.</span>
+                    <div class="pure-u-4-5">
+                        <span id="success-message" class="registration-successful" style="margin-top:100px">An email has been send to confirm registration.</span>
                     </div>
                 </div>
             </div>
@@ -137,12 +159,25 @@
     </div>
     </div>
 
-
-
 </div>
 
 <!-- JS -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+<script src="assets/js/jquery-ui-1.10.4.min.js"></script>
 <script src="assets/js/login.js"></script>
+
+
+
+<div id="dialog" title="Terms and Conditions">
+    <p>Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec sed odio dui. Etiam porta sem malesuada magna mollis euismod. Etiam porta sem malesuada magna mollis euismod. Donec ullamcorper nulla non metus auctor fringilla. Morbi leo risus, porta ac consectetur ac, vestibulum at eros.
+
+       </p><p> Duis mollis, est non commodo luctus, nisi erat porttitor ligula, eget lacinia odio sem nec elit. Cras justo odio, dapibus ac facilisis in, egestas eget quam. Nullam id dolor id nibh ultricies vehicula ut id elit. Cras mattis consectetur purus sit amet fermentum. Donec sed odio dui. Fusce dapibus, tellus ac cursus commodo, tortor mauris condimentum nibh, ut fermentum massa justo sit amet risus.
+
+        Cras mattis consectetur purus sit amet fermentum. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Integer posuere erat a ante venenatis dapibus posuere velit aliquet. Donec ullamcorper nulla non metus auctor fringilla. Curabitur blandit tempus porttitor.</p>
+</div>
+
+
+
+
 </body>
 </html>

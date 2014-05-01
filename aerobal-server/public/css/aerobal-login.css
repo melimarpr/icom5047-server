@@ -27,10 +27,10 @@ html#login{
 }
 
 .aero{
-  color: #68ba68;
+  color: #5db1fd;
 }
 .bal{
-  color: #2a842a;
+  color: #084391;
 }
 
 #subheader.login-header{
@@ -56,20 +56,20 @@ html#login{
 
 .btn-login{
 
-     background-color: #2a842a;
+     background-color: #084391;
      width: 50%;
 
 }
 
 .btn-register{
-     background-color: #68ba68;
+     background-color: #5db1fd;
      width: 50%;
 }
 
 
 a.flat-btn:hover{
 
-    background-color: #7a8d7a;
+    background-color: #aec8eb;
     filter:alpha(opacity=80);
     opacity:0.80;
 
@@ -103,7 +103,7 @@ a.btn-size-item {
 }
 
 .btn-sign-in{
-    background-color: #68ba68;
+    background-color: #5db1fd;
     margin-top: 15px;
     margin-bottom: 15px;
 
@@ -119,7 +119,7 @@ a#btn-forgot{
 }
 
 .registration-successful{
-
+   margin:25px;
    font-size:1.25em;
 }
 
@@ -157,11 +157,11 @@ a:active {
 }
 
 a.terms :link {
-    color: #2a842a;
+    color: #084391;
     text-decoration:none;
 }
 a.terms:visited {
-    color: #2a842a;
+    color: #084391;
     text-decoration:none;
 }
 a.terms:hover {
@@ -169,7 +169,7 @@ a.terms:hover {
     text-decoration:none;
 }
 a.terms:active {
-    color: #2a842a;
+    color: #084391;
     text-decoration:none;
 }
 

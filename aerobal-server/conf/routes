@@ -4,8 +4,11 @@
 
 #Website
 GET     /                           		controllers.Website.index
+POST    /auth_website                       controllers.Website.authWebsite
 GET     /login                              controllers.Website.login
 GET     /panel                              controllers.Website.panel
+
+
 GET     /settings                           controllers.Website.settings
 GET     /main                               controllers.Website.main
 GET     /my_sessions                        controllers.Website.sessions
@@ -26,6 +29,7 @@ GET		/runs								controllers.Gets.runs(experimentId: Long)
 GET		/measurements						controllers.Gets.measurements(runId: Long)
 GET		/users								controllers.Gets.users
 GET		/full_experiment								controllers.Gets.fullExperiment(id: Long)
+GET     /forgot_password                    controllers.Gets.forgotPassword(email: String)
 
 #Posts
 POST	/new_user							controllers.Posts.newUser
@@ -35,6 +39,7 @@ POST	/new_run							controllers.Posts.newRun
 POST	/new_measurement					controllers.Posts.newMeasurement
 POST	/auth								controllers.Posts.auth
 POST	/submit_experiment					controllers.Posts.submit_experiment
+
 
 #Updates
 PUT		/update_user						controllers.Puts.update_user
