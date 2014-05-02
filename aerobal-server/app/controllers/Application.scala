@@ -27,7 +27,7 @@ object Application extends Controller {
 			println("Finished building session Factory");
 			tbr 
 	}
-	
+
 
 	def setTestConfigFile() {
 		configFile = "hibernatetest.cfg.xml";
@@ -92,13 +92,26 @@ object Application extends Controller {
 			!listResults.isEmpty();
 	}
 	def sendRegisterEmail(address: String) {
-	 val sendGrid = new SendGrid(SendGridCredentials.UserName, SendGridCredentials.Password);
-	 sendGrid.setFrom("aerobal@ece.uprm.edu");
-	 sendGrid.setFromName("AeroBal");
-	 sendGrid.addTo(address);
-	 sendGrid.setSubject("AeroBal Web App Registration");
-	 sendGrid.setText("");
-	 sendGrid.send();
-	 println("sent");
+		val sendGrid = new SendGrid(SendGridCredentials.UserName, SendGridCredentials.Password);
+		sendGrid.setFrom("aerobal@ece.uprm.edu");
+		sendGrid.setFromName("AeroBal");
+		sendGrid.addTo(address.trim());
+		sendGrid.setSubject("AeroBal Web App Registration");
+		sendGrid.setText("Welcome to AeroBal!\n\nYou have just been registered in AeroBal with this email address. " +
+				"This account can be used to both browse our web repository and to commit experiments into it. " + 
+				"We hope you enjoy using our automated Wind Tunnel system at UPRM!\n\nSincerely,\nThe AeroBal Team");
+		sendGrid.send();
+	}
+	def sendForgotPasswordEmail(address: String) {
+		val sendGrid = new SendGrid(SendGridCredentials.UserName, SendGridCredentials.Password);
+		val user = Gets.getUserFromEmail(address).getOrElse(throw new NoSuchElementException("No user with this email."));
+		sendGrid.setFrom("aerobal@ece.uprm.edu");
+		sendGrid.setFromName("AeroBal");
+		sendGrid.addTo(address);
+		sendGrid.setSubject("AeroBal Forgotten Pasword");
+		sendGrid.setHtml("<p>You or someone else have asked to reset your password. If you would like to reset your pass, " + 
+				"click <a href=\"http://162.243.4.162/resetPassword?resetCode=" + user.getToken + "\">here</a>: \n\n" + 
+				"\n\n Sincerely, \nThe AeroBal Team</p>");
+		sendGrid.send();
 	}
 }
