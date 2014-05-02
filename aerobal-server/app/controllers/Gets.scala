@@ -17,6 +17,12 @@ import com.aerobal.data.objects.Measurement
 
 object Gets extends Controller {
 	private val gson = GlobalGson.gson;
+	
+	
+	def testEmail(email: String) = Action {
+	  Application.sendRegisterEmail(email);
+	  Ok(email);
+	}
 	def user = Action {
 		request => 
 		try {
@@ -34,10 +40,10 @@ object Gets extends Controller {
 		}
 	}
 
-  def forgotPassword(email: String) = Action {
-    request =>
-      Ok("Forgot");
-  }
+	def forgotPassword(email: String) = Action {
+		request =>
+		Ok("Forgot");
+	}
 
 	def session(id: Long) = Action { 
 		request => 
@@ -104,7 +110,22 @@ object Gets extends Controller {
 			val token = headersMap.getOrElse(Constants.TOKEN_TEXT, List(""))(0);
 			val userOpt = getUser(token);
 			val user = userOpt.getOrElse(throw new NotFoundException("No user found."));
-			val sessions = getSessions(user.id,token,false);
+			val sessions = getSessions(token,false);
+			Ok("{\"payload\":"+gson.toJson(sessions.toArray)+"}").as("application/json");
+		} 
+		catch {
+		case e: NotFoundException => { NotFound(e.getMessage()) }
+		case e: Exception => { e.printStackTrace(); InternalServerError("Something went wrong...") }
+		}
+	}
+	def publicSessions = Action {
+		request =>
+		try {
+			val headersMap = request.headers.toMap;
+			val token = headersMap.getOrElse(Constants.TOKEN_TEXT, List(""))(0);
+			val userOpt = getUser(token);
+			val user = userOpt.getOrElse("");
+			val sessions = getSessions(token,true);
 			Ok("{\"payload\":"+gson.toJson(sessions.toArray)+"}").as("application/json");
 		} 
 		catch {
@@ -318,13 +339,12 @@ object Gets extends Controller {
 			resultsList.foreach(x => tbrList.add(x.asInstanceOf[UserDto]));
 			tbrList.toList;
 	}
-	def getSessions(userId: Long,token: String, showPublic: Boolean): List[SessionDto] = {
+	def getSessions(token: String, showPublic: Boolean): List[SessionDto] = {
 			val session = Application.sessionFactory.openSession();
-			val hql = "FROM SessionDto S WHERE S.userId = :userId AND S.isActive = true AND " + 
-					" (S.userId IN " + 
-					"(select id from UserDto WHERE token = :token) OR (S.isPublic = true AND :showPublic = true))";
+			val hql = "FROM SessionDto S WHERE S.isActive = true AND " + 
+					" ((S.userId IN " + 
+					"(select id from UserDto WHERE token = :token) OR (S.isPublic = true AND :showPublic = true)))";
 			val query = session.createQuery(hql);
-			query.setLong("userId", userId);
 			query.setBoolean("showPublic", showPublic);
 			query.setString(Constants.TOKEN_TEXT, token);
 			val resultsList = query.list();

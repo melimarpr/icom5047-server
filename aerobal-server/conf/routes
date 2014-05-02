@@ -24,12 +24,14 @@ GET		/run								controllers.Gets.run(id: Long)
 GET		/session							controllers.Gets.session(id: Long)
 GET		/user								controllers.Gets.user
 GET		/sessions							controllers.Gets.sessions
+GET		/public_sessions						controllers.Gets.publicSessions
 GET		/experiments						controllers.Gets.experiments(sessionId: Long)
 GET		/runs								controllers.Gets.runs(experimentId: Long)
 GET		/measurements						controllers.Gets.measurements(runId: Long)
 GET		/users								controllers.Gets.users
-GET		/full_experiment								controllers.Gets.fullExperiment(id: Long)
+GET		/full_experiment					controllers.Gets.fullExperiment(id: Long)
 GET     /forgot_password                    controllers.Gets.forgotPassword(email: String)
+GET		/testEmail							controllers.Gets.testEmail(email: String)
 
 #Posts
 POST	/new_user							controllers.Posts.newUser

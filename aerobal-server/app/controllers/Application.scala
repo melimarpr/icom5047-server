@@ -10,6 +10,8 @@ import com.google.gson.Gson
 import org.hibernate.boot.registry.StandardServiceRegistryBuilder
 import java.security.SecureRandom
 import java.math.BigInteger
+import com.github.sendgrid.SendGrid
+import credentials.SendGridCredentials
 
 object Application extends Controller {
 	//  val sf = JPA.em().getDelegate().asInstanceOf[Session].Gets.getSessionFactory();
@@ -25,6 +27,7 @@ object Application extends Controller {
 			println("Finished building session Factory");
 			tbr 
 	}
+	
 
 	def setTestConfigFile() {
 		configFile = "hibernatetest.cfg.xml";
@@ -87,5 +90,15 @@ object Application extends Controller {
 			val listResults = query.list();
 			session.close();
 			!listResults.isEmpty();
+	}
+	def sendRegisterEmail(address: String) {
+	 val sendGrid = new SendGrid(SendGridCredentials.UserName, SendGridCredentials.Password);
+	 sendGrid.setFrom("aerobal@ece.uprm.edu");
+	 sendGrid.setFromName("AeroBal");
+	 sendGrid.addTo(address);
+	 sendGrid.setSubject("AeroBal Web App Registration");
+	 sendGrid.setText("");
+	 sendGrid.send();
+	 println("sent");
 	}
 }
