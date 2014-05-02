@@ -1,39 +1,11 @@
-html {
-
-    font-family: Helvetiva;
-
-        width: 100%;
-        height: 100%;
-        padding 0;
-        background: url('../img/loginbg.jpg') no-repeat center center fixed;
-        background-attachment: fixed;
-        -webkit-background-size: cover;
-        -moz-background-size: cover;
-        -o-background-size: cover;
-        background-size: cover;
-        -ms-filter: "progid:DXImageTransform.Microsoft.AlphaImageLoader(src='../img/loginbg.jpg', sizingMethod='scale')";
-        filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src='../img/loginbg.jpg', sizingMethod='scale');
-
-}
 
 
-* {
-  -webkit-border-radius: 0 !important;
-     -moz-border-radius: 0 !important;
-          border-radius: 0 !important;
-}
 
-.panel {
+/* Helper Classes */
+
+.white-panel {
     background-color: rgb(250, 250, 250);
     box-shadow: 1px 1px 0px #333333;
-
-}
-
-.bg-panel {
-    background-color: #bdbdbd;
-    padding: 0px 10px 0px 10px;
-    height:100vh;
-
 }
 
 
@@ -42,7 +14,18 @@ html {
     margin: auto;
     position: absolute;
     width: 100%;
-    height: 25%;
+    height: 50%;
+}
+
+
+/* Variations of Center */
+
+div.#main-splash.center{
+    height: 50%;
+}
+
+div#loader.center {
+    height: 35%;
 }
 
 #setting-container.center {
@@ -53,60 +36,33 @@ html {
     height: 50%;
 }
 
-.center-loader{
-    bottom: 0; left: 0; top: 0; right: 0;
-    margin: auto;
-    position: absolute;
-    width:  100%;
-    height: 35%;
-}
-
+/* Button Classes */
 .btn-success{
-     background-color: #68ba68;
+     background-color: #5db1fd;
 }
 
-
-.bar-light-green{
-    width: 100%;
-    height: auto;
-    background-color: #68ba68;
-}
-.bar-text{
-    font-size: 2em;
-    color: #FFF;
+/* Title Classes */
+h1.title {
     margin: 10px;
 }
 
 
-a.btn-size-item {
-        display: block;
-        color: #fff;
-        padding: 1.45em 0;
-        text-align: center;
-        text-decoration: none;
-        text-transform: capitalize;
-    }
-
-a.flat-btn:hover{
-
-    background-color: #7a8d7a;
-    filter:alpha(opacity=80);
-    opacity:0.80;
-
-}
-
-
-.bar-dark-green{
+/* Bar Classes */
+.bar-dark-blue{
     width: 100%;
     height: auto;
-    background-color: #2a842a;
+    background-color: #1f8dd6;
 }
 
-.img-btn{
-    display: block;
-    max-width: 5%;
-    max-height:5%;
-    margin: 10px auto;
+.bar-light-blue{
+    width: 100%;
+    height: auto;
+    background-color: #5db1fd;
+}
 
+.bar-text{
+    font-size: 1.75em;
+    color: #FFF;
+    margin: 10px;
 }
 

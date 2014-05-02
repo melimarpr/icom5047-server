@@ -1,7 +1,6 @@
 'use strict';
 
-//Global Variables
-var main_website = "http://localhost:9000/";
+//Global Setup
 $.ajaxSetup({ cache: false });
 
 
@@ -33,7 +32,7 @@ function login(){
             //Get Text
             $("#login-error").html(jqXHR.responseText);
             hideLoading("#login-cont");
-            $("#login-error").show().delay(1500).fadeOut();
+            $("#login-error").show().delay(delay_time).fadeOut();
         }
     });
 }
@@ -77,7 +76,7 @@ function register(){
 
     if(pass != passConf){
         $("#register-error").html("Passwords Don't Match");
-        $("#register-error").show().delay(1500).fadeOut();
+        $("#register-error").show().delay(delay_time).fadeOut();
         return;
     }
 
@@ -100,7 +99,7 @@ function register(){
         }).fail(function(jqXHR, textStatus, errorThrown){
                   hideLoading("#register-cont");
                   $("#register-error").html("Passwords Don't Match");
-                  $("#register-error").show().delay(1500).fadeOut();
+                  $("#register-error").show().delay(delay_time).fadeOut();
          });
 
 
@@ -161,11 +160,11 @@ $(function() {
       resizable: false,
       show: {
         effect: "fade",
-        duration: 1000
+        duration: delay_time
       },
       hide: {
         effect: "fade",
-        duration: 1000
+        duration: delay_time
       }
     });
 

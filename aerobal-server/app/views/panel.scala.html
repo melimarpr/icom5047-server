@@ -7,15 +7,13 @@
     <title>AeroBal - Dashboard</title>
 
     <!-- Bootstrap core CSS -->
-    <link href="assets/css/bootstrap.css" rel="stylesheet" />
-    <link href="assets/css/bootstrap-theme.css" rel="stylesheet" />
     <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.4.2/pure-min.css">
 
     <!-- Custom styles for this template -->
-    <link href="assets/css/dashboard.css" rel="stylesheet" />
     <link href="assets/css/spinner.css" rel="stylesheet"   />
+    <link href="assets/css/aerobal-navbar.css" rel="stylesheet" />
     <link href="assets/css/aerobal-main.css" rel="stylesheet" />
-
+    <link href="assets/css/messageboxes.css" rel="stylesheet" />
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -25,48 +23,35 @@
 </head>
 
 <body>
-
-<div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-    <div class="container-fluid">
-        <div class="navbar-header">
-            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                <span class="sr-only">Toggle navigation</span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </button>
-            <a id="main-menu" class="navbar-brand" href="#">AeroBal</a>
-        </div>
-        <div class="navbar-collapse collapse">
-            <ul class="nav navbar-nav navbar-right">
-                <form class="navbar-form navbar-right">
-                    <input id="main-search" type="text" class="form-control" placeholder="Search Sessions" >
-                </form>
-                <li><a id="main-browse"   href="#">Browse</a></li>
-                <li><a id="main-sessions" href="#">My Sessions</a></li>
-                <li><a id="main-settings" href="#">Settings</a></li>
-                <li><a id="main-logout" href="http://localhost:9000/logout">Log-Out</a></li>
-            </ul>
-
-        </div>
+<!-- Class -->
+<div class="header">
+    <div class="home-menu pure-menu pure-menu-open pure-menu-horizontal pure-menu-fixed">
+        <a class="pure-menu-heading" href="">AeroBal</a>
+        <ul>
+            <li><a id="main-browse"   href="#">Browse</a></li>
+            <li><a id="main-sessions" href="#">My Sessions</a></li>
+            <li><a id="navbar-settings" href="#" onclick="navbarSettings()">Settings</a></li>
+            <li><a id="navbar-logout" href="http://localhost:9000/logout">Log-Out</a></li>
+            <li class="home-search-bar"><form>
+                <input id="main-search" type="text" class="form-control" placeholder="Search Sessions" >
+            </form></li>
+        </ul>
     </div>
 </div>
 
-<!-- Side Bar To Inject-->
+<!-- Main Container -->
 <div id="container">
-    <div class="panel center-loader">
-        <div class="loader" style="margin-bottom:200px;">Loading</div>
+    <div id="loader" class="white-panel center">
+        <div class="loader">Loading...</div>
     </div>
 </div>
 
 
 
 
-<!-- Bootstrap core JavaScript
-================================================== -->
-<!-- Placed at the end of the document so the pages load faster -->
+<!-- JS -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
-<script src="assets/js/bootstrap.min.js"></script>
-<script src="assets/js/main.js"></script>
+<script src="assets/js/constants.js"></script>
+<script src="assets/js/dashboard.js"></script>
 </body>
 </html>

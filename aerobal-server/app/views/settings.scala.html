@@ -1,33 +1,37 @@
-<div id="setting-container" class="pure-g-r center" >
+@(name: String, email: String)
+<div id="setting-container" class="pure-g-r center white-panel" >
     <!-- Padding -->
-    <div class="pure-u-1-5"></div>
+    <div class="pure-u-1-5  white-panel"></div>
 
-    <div  class="pure-u-3-5 panel">
-        <h1 style="margin: 10px;">Settings</h1>
-        <div class="bar-light-green">
+    <div  class="pure-u-3-5  white-panel">
+        <h1 class="title">Settings</h1>
+        <br />
+        <div class="bar-dark-blue">
             <span class="bar-text">Profile</span>
         </div>
-        <form class="pure-form pure-form-aligned"  style="margin:10px;">
+        <form class="pure-form pure-form-aligned"  style="margin:10px;" action="javascript:updateProfile()">
             <fieldset>
                 <div class="pure-control-group">
-                    <label for="name">Name</label>
-                    <input id="name" type="text" placeholder="Full name" class="pure-input-2-3">
+                    <label for="settings-name">Name</label>
+                    <input id="settings-name" type="text" placeholder="Full name" class="pure-input-2-3" value="@name">
                 </div>
 
                 <div class="pure-control-group">
-                    <label for="email">Email Address</label>
-                    <input id="email" type="email" placeholder="Email Address" class="pure-input-2-3">
+                    <label for="settings-email">Email Address</label>
+                    <input id="settings-email" type="email" placeholder="Email Address" class="pure-input-2-3" value="@email">
                 </div>
 
                 <div class="pure-controls">
-                    <button type="submit" class="pure-button btn-success">Save</button>
+                    <button id="settings-profile-submit" type="submit" class="pure-button btn-success">Save</button><img id="settings-profile-loading" src="assets/img/small-spinner.gif" style="display:none;" />
+                    <div id="settings-profile-error" class="error pure-input-2-3" style="margin:10px 10px 10px 0px; display:none;">Error</div>
                 </div>
             </fieldset>
         </form>
-        <div class="bar-dark-green">
+
+        <div class="bar-dark-blue">
             <span class="bar-text">Password</span>
         </div>
-        <form class="pure-form pure-form-aligned" style="margin:10px;">
+        <form class="pure-form pure-form-aligned" style="margin:10px;" action="javascript:updatePassword()">
             <fieldset>
                 <div class="pure-control-group">
                     <label for="settings-curr-password">Current Password</label>
@@ -45,15 +49,17 @@
                 </div>
 
                 <div class="pure-controls">
-                    <button type="submit" class="pure-button btn-success">Save</button>
+                    <button id="settings-password-submit" type="submit" class="pure-button btn-success">Save</button><img id="settings-password-loading" src="assets/img/small-spinner.gif" style="display:none;" />
+                    <div id="settings-password-error" class="error pure-input-2-3" style="margin:10px 10px 10px 0px; display:none;">Error</div>
                 </div>
             </fieldset>
         </form>
 
+
     </div>
 
     <!-- Padding -->
-    <div class="pure-u-1-5"></div>
+    <div class="pure-u-1-5  white-panel"></div>
 
 
 </div>

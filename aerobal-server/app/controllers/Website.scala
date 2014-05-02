@@ -3,7 +3,7 @@ package controllers
 import play.api.mvc.Controller
 import play.api.mvc.Action
 import javassist.NotFoundException
-import exceptions.{InternalServerErrorException, InvalidPasswordException}
+import exceptions.{ForbiddenAccessException, InternalServerErrorException, InvalidPasswordException}
 import play.mvc.Http.Session
 
 
@@ -111,12 +111,102 @@ object Website extends Controller{
     Redirect(routes.Website.login).withNewSession
   }
 
+  /**
+   * Settings Route Token Exists
+   * @return Settings HTML With Data
+   */
+  def settings = Action { request =>
+    val tokenOption = request.session.get(Constants.WEB_SESSION_TOKEN_KEY)
+    if(tokenOption.isDefined) {
+      val userOpt = Gets.getUser(tokenOption.get)
+      if(userOpt.isDefined){
+        val user = userOpt.get
+        Ok(views.html.settings(user.getName, user.getEmail))
+
+      }else{
+        Redirect(routes.Website.login).withNewSession
+      }
+    } else {
+      Redirect(routes.Website.login).withNewSession
+  }
+
+  }
+
+  def main = Action{ request =>
+    val tokenOption = request.session.get(Constants.WEB_SESSION_TOKEN_KEY)
+    val token = tokenOption.getOrElse("");
+    if(!token.isEmpty){
+      Ok(views.html.main())
+    }
+    else {
+      Redirect(routes.Website.login).withNewSession
+    }
+  }
+
+  /*======================== Puts ========================*/
+
+  def update_profile = Action { request =>
+    try {
+      val values = request.body.asFormUrlEncoded.getOrElse(throw new NoSuchElementException("No Form URL Encoded body supplied."));
+      val token = request.session.get(Constants.WEB_SESSION_TOKEN_KEY)
+      if(validateToken(token)){
+        val nameOpt = values.get(Constants.USER_NAME_TEXT);
+        val name = nameOpt.getOrElse(null)(0);
+        val emailOpt = values.get(Constants.USER_EMAIL_TEXT);
+        val email = emailOpt.getOrElse(null)(0);
+        val updetedUserOpt = Puts.updateUser(Some(name), Some(email), token.get);
+        if (updetedUserOpt.isDefined){
+          Ok("ok");
+        }
+        else{
+          BadRequest("Not Valid User")
+        }
+      } else{
+        BadRequest("Not Valid Token")
+      }
+    }
+    catch {
+      case e: ForbiddenAccessException => { Forbidden(e.getMessage()) };
+      case e: NoSuchElementException => { BadRequest(e.getMessage()) };
+      case e: InternalServerErrorException => { InternalServerError(e.getMessage()) };
+      case e: Exception => { InternalServerError("Something went wrong...") };
+    }
+  }
+
+  def update_password = Action { request =>
+    try {
+      val values = request.body.asFormUrlEncoded.getOrElse(throw new NoSuchElementException("No Form URL Encoded body supplied."));
+      val token = request.session.get(Constants.WEB_SESSION_TOKEN_KEY)
+      if(validateToken(token)){
+        val currentPassword = values.get(Constants.UPDATE_PASSWORD_CURRENT_PASSWORD_TEXT).getOrElse(throw new NoSuchElementException("Parameter \'" + Constants.UPDATE_PASSWORD_CURRENT_PASSWORD_TEXT + "\' is missing."))(0);
+        val newPassword = values.get(Constants.UPDATE_PASSWORD_NEW_PASSWORD_TEXT).getOrElse(throw new NoSuchElementException("Parameter \'" + Constants.UPDATE_PASSWORD_NEW_PASSWORD_TEXT + "\' is missing."))(0);
+        val newHashOpt = Puts.updatePassword(currentPassword, newPassword, token.get);
+        if (newHashOpt.isDefined){
+          Ok("ok");
+        }
+        else{
+          BadRequest("Not Valid Password")
+        }
+      } else{
+        BadRequest("Not Valid Token")
+      }
+    }
+    catch {
+      case e: ForbiddenAccessException => { Forbidden(e.getMessage()) };
+      case e: NoSuchElementException => { BadRequest(e.getMessage()) };
+      case e: InternalServerErrorException => { InternalServerError(e.getMessage()) };
+      case e: Exception => { InternalServerError("Something went wrong...") };
+    }
+  }
 
 
 
 
 
 
+
+
+  //Old Stuff
   def browse = Action {
     //Return Default Browse Session HTML
     Ok(views.html.browse())
@@ -132,18 +222,12 @@ object Website extends Controller{
 
 
 
-  def settings = Action {
-    Ok(views.html.settings())
-  }
+
 
 
 
   def sessions = Action{
     Ok(views.html.mysessions())
-  }
-
-  def main = Action{
-    Ok(views.html.main())
   }
 
   def result =  Action {
