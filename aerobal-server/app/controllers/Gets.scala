@@ -42,7 +42,7 @@ object Gets extends Controller {
 
 	def forgotPassword(email: String) = Action {
 		request =>
-		Ok("Forgot");
+		Ok("Forgot").as("application/json");
 	}
 
 	def session(id: Long) = Action { 
