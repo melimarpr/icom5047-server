@@ -28,12 +28,11 @@ function login(){
             }
         }
     ).fail(function(jqXHR, textStatus, errorThrown){
-        if(jqXHR.status == 404) {
+
             //Get Text
             $("#login-error").html(jqXHR.responseText);
             hideLoading("#login-cont");
             $("#login-error").show().delay(delay_time).fadeOut();
-        }
     });
 }
 

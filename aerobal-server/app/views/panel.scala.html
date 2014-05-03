@@ -6,8 +6,7 @@
 
     <title>AeroBal - Dashboard</title>
 
-    <!-- Bootstrap core CSS -->
-    <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.4.2/pure-min.css">
+    <link href="assets/css/pure-min.css" rel="stylesheet" />
 
     <!-- Custom styles for this template -->
     <link href="assets/css/spinner.css" rel="stylesheet"   />
@@ -28,12 +27,12 @@
     <div class="home-menu pure-menu pure-menu-open pure-menu-horizontal pure-menu-fixed">
         <a class="pure-menu-heading" href="">AeroBal</a>
         <ul>
-            <li><a id="main-browse"   href="#">Browse</a></li>
+            <li><a id="navbar-browse"   href="#" onclick="navbarBrowse()">Browse</a></li>
             <li><a id="main-sessions" href="#">My Sessions</a></li>
             <li><a id="navbar-settings" href="#" onclick="navbarSettings()">Settings</a></li>
-            <li><a id="navbar-logout" href="http://localhost:9000/logout">Log-Out</a></li>
+            <li><a id="navbar-logout" href="/logout">Log-Out</a></li>
             <li class="home-search-bar"><form>
-                <input id="main-search" type="text" class="form-control" placeholder="Search Sessions" >
+                <input id="navbar-search" type="text" class="form-control" placeholder="Search Sessions" >
             </form></li>
         </ul>
     </div>

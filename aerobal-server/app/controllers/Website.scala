@@ -200,6 +200,54 @@ object Website extends Controller{
   }
 
 
+  def search_sessions(query: String, email: String ,order: String, start: Int, end: Int ) = Action { request =>
+    try {
+
+      //Token
+      val tokenOption = request.session.get(Constants.WEB_SESSION_TOKEN_KEY)
+
+      if (validateToken(tokenOption)) {
+
+        val userOp = Gets.getUser(tokenOption.get)
+        val isPublic = true
+        val sessions = Gets.getSessions(userOp.get.id, tokenOption.get, isPublic )
+
+        println(sessions);
+        val querySession = sessions.filter(x => x.getName().contains(query) || x.getDescription().contains(email) ||  Gets.getUser(x.getId()).get.getEmail.contains(email));
+        val finalSession = querySession.slice(if ( start < querySession.length) {
+          start
+        } else {
+          0
+        }, if(end < querySession.length) {
+          end
+        } else {
+          querySession.length;
+        })
+
+        var sortedSessions = finalSession.sortWith( (x,y) => x.getName > y.getName)
+        if(order.equals("Descending")){
+          sortedSessions = finalSession.sortWith( (x,y) => x.getName < y.getName)
+
+        }
+
+        if (sortedSessions.length == 0){
+          Ok(views.html.exclamation("No Sessions Found"))
+        }
+        else{
+
+          Ok(views.html.exclamation("Placeholder"))
+        }
+
+      } else {
+        BadRequest(views.html.exclamation("Invalid Access To Session "));
+      }
+
+    }catch {
+      case e: NoSuchElementException => { BadRequest(e.getMessage())};
+    }
+  }
+
+
 
 
 
@@ -216,10 +264,6 @@ object Website extends Controller{
     Ok(views.html.nosession())
   }
 
-  def session_search = Action{
-    Ok(views.html.result())
-  }
-
 
 
 
@@ -230,10 +274,6 @@ object Website extends Controller{
     Ok(views.html.mysessions())
   }
 
-  def result =  Action {
-     Ok(views.html.result())
-
-  }
 
 
 

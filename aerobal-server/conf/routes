@@ -11,12 +11,15 @@ GET     /settings                           controllers.Website.settings
 GET     /main                               controllers.Website.main
 POST    /update_profile                     controllers.Website.update_profile
 POST    /update_password_website            controllers.Website.update_password
+GET     /search_sessions                    controllers.Website.search_sessions(query: String, email: String,order: String, start: Int, end: Int )
+
+
 
 GET     /my_sessions                        controllers.Website.sessions
 GET     /browse                             controllers.Website.browse
 GET     /no_session                         controllers.Website.no_session
 GET     /logout                             controllers.Website.logout
-GET     /search_sessions                    controllers.Website.session_search
+
 
 # GET
 GET		/measurement						controllers.Gets.measurement(id: Long)

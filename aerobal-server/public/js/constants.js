@@ -1,2 +1,7 @@
-var main_website = "http://localhost:9000/";
+var main_website = "/";
 var delay_time = 1000;
+
+//Paging
+var paging_browse_start = 0;
+var paging_browse_end = 10;
+

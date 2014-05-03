@@ -41,6 +41,12 @@ object Constants {
    * Website Constants
    */
   val WEB_SESSION_TOKEN_KEY = "tokenKey";
+  val WEB_SESSIONS_QUERY = "query";
+  val WEB_SESSIONS_EMAIL = "email";
+  val WEB_SESSIONS_ORDER = "order";
+  val WEB_SESSIONS_PAGING_START = "start";
+  val WEB_SESSIONS_PAGING_END = "end"
+
 
 
 }

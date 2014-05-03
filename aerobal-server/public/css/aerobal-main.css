@@ -1,12 +1,23 @@
 
-
+/* Pure CSS Change */
+#container.pure-g-r {
+    display: inline;
+}
 
 /* Helper Classes */
 
 .white-panel {
     background-color: rgb(250, 250, 250);
-    box-shadow: 1px 1px 0px #333333;
+    /*box-shadow: 1px 1px 0px #333333;*/
 }
+
+.exclamation {
+    text-align:center;
+    color: #1f8dd6;
+    text-size: 5em;
+}
+
+
 
 
 .center {
@@ -19,8 +30,12 @@
 
 
 /* Variations of Center */
+div#no-session-container.center {
+    height:  10%;
+}
 
-div.#main-splash.center{
+
+div#main-splash.center{
     height: 50%;
 }
 
@@ -28,13 +43,14 @@ div#loader.center {
     height: 35%;
 }
 
-#setting-container.center {
-    bottom: 0; left: 0; top: 0; right: 0;
-    margin: auto;
-    position: absolute;
-    width: 100%;
+div#setting-container.center {
     height: 50%;
 }
+
+div#browser-container.center{
+    height: 30%;
+}
+
 
 /* Button Classes */
 .btn-success{

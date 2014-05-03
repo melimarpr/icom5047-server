@@ -29,6 +29,49 @@ function navbarSettings(){
 
 }
 
+function navbarBrowse(){
+    loadWaitingElement();
+    $.get(
+        main_website+"browse",
+        function(data){
+            setDataToContainer(data);
+        }
+    );
+}
+
+//Search Bar
+$("#navbar-search").keyup(function (e) {
+    if (e.keyCode == 13) {
+        loadWaitingElement();
+         var query = $("#navbar-search").val();
+
+         paging_browse_start = 0;
+         paging_browse_end = 10;
+
+         var data = {
+             "query": query,
+             "order":"Ascending",
+             "email":"",
+             "start": paging_browse_start,
+             "end": paging_browse_end
+         }
+
+         loadWaitingElement();
+         $.get(
+             main_website+"search_sessions",
+             data,
+             function(data){
+                 paging_browse_start += 10;
+                 paging_browse_end   += 10;
+                 setDataToContainer(data)
+             }
+         ).fail(function(jqXHR, textStatus, errorThrown){
+                  console.log(jqXHR);
+         });
+    }
+});
+
+
 
 
 /*
@@ -72,6 +115,7 @@ function updatePassword(){
                  toggleSettingsError("settings-password", "Successful Change", "success");
             }
      ).fail(function(jqXHR, textStatus, errorThrown){
+         console.log(jqXHR);
          $("#settings-curr-password").val("");
          $("#settings-new-password").val("");
          $("#settings-conf-new-password").val("");
@@ -95,9 +139,8 @@ function updateProfile(){
                  toggleSettingsError("settings-profile", "Successful Change", "success");
             }
      ).fail(function(jqXHR, textStatus, errorThrown){
-         console.log(jqXHR)
          toggleSettingsSpinner("off", "settings-profile");
-         toggleSettingsError("settings-profile", "Server Error", "error");
+         toggleSettingsError("settings-profile", jqXHR.responseText, "error");
      });
 
 
@@ -134,6 +177,8 @@ function toggleSettingsError(id, msg, type){
 
 }
 
+/* Browse Screen */
+
 
 
 //Main Content On Click
@@ -157,15 +202,7 @@ $("#main-menu").click(function(){
         }
     );
 });
-$("#main-browse").click(function(){
-    loadWaitingElement();
-    $.get(
-        main_website+"browse",
-        function(data){
-            setDataToContainer(data);
-        }
-    );
-});
+
 $("#main-sessions").click(function(){
     loadWaitingElement();
     $.get(
@@ -176,38 +213,38 @@ $("#main-sessions").click(function(){
     );
 });
 
-$("#main-search").keyup(function (e) {
-    if (e.keyCode == 13) {
-        loadWaitingElement();
-        console.log("Este Cabron")
-    }
-});
-
-
-
-
-
-
 
 
 //Browser On-Click
-
 function browseSubmit(){
-
     //Get Data
     var query = $("#browse-session-query").val();
     var email = $("#browse-email").val();
     var order = $( "#browse-order option:selected" ).text();
+
+
+    var data = {
+        "query": query,
+        "order":order,
+        "email": email,
+        "start": paging_browse_start,
+        "end": paging_browse_end
+    }
+
+     paging_browse_start = 0;
+     paging_browse_end = 10;
+
     loadWaitingElement();
     $.get(
         main_website+"search_sessions",
-        {
-            "query": query,
-            "email": email,
-            "order": order
+        data,
+        function(data){
+            paging_browse_start += 10;
+            paging_browse_end   += 10;
+            setDataToContainer(data)
         }
-    ).done( function(data, status){
-        //Do Stuff
+    ).fail(function(jqXHR, textStatus, errorThrown){
+        setDataToContainer(jqXHR.responseText);
     });
 }
 
