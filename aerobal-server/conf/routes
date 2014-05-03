@@ -34,8 +34,6 @@ GET		/measurements						controllers.Gets.measurements(runId: Long)
 GET		/users								controllers.Gets.users
 GET		/full_experiment					controllers.Gets.fullExperiment(id: Long)
 GET     /forgot_password                    controllers.Gets.forgotPassword(email: String)
-GET		/testEmail							controllers.Gets.testEmail(email: String)
-
 #Posts
 POST	/new_user							controllers.Posts.newUser
 POST	/new_session						controllers.Posts.newSession

@@ -205,14 +205,12 @@ object Website extends Controller{
 
       //Token
       val tokenOption = request.session.get(Constants.WEB_SESSION_TOKEN_KEY)
-
+      val token = tokenOption.getOrElse("");
       if (validateToken(tokenOption)) {
 
-        val userOp = Gets.getUser(tokenOption.get)
-        val isPublic = true
-        val sessions = Gets.getSessions(tokenOption.get, isPublic )
-
-        println(sessions);
+        val userOpt = Gets.getUser(tokenOption.get);
+        val isPublic = true;
+        val sessions = Gets.getSessions(tokenOption.get, isPublic );
         val querySession = sessions.filter(x => x.getName().contains(query) || x.getDescription().contains(email) ||  Gets.getUser(x.getId()).get.getEmail.contains(email));
         val finalSession = querySession.slice(if ( start < querySession.length) {
           start
@@ -230,12 +228,12 @@ object Website extends Controller{
 
         }
 
-        if (sortedSessions.length == 0){
+        if (sortedSessions.isEmpty){
           Ok(views.html.exclamation("No Sessions Found"));
         }
         else{
 
-          Ok(views.html.exclamation("Placeholder"))
+          Ok(views.html.exclamation("placeholder"))
         }
 
       } else {

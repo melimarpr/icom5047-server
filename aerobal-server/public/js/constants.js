@@ -1,4 +1,4 @@
-var main_website = "/";
+var main_website = "./";
 var delay_time = 1000;
 
 //Paging

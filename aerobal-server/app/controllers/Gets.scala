@@ -17,12 +17,9 @@ import com.aerobal.data.objects.Measurement
 
 object Gets extends Controller {
 	private val gson = GlobalGson.gson;
-	
-	
-	def testEmail(email: String) = Action {
-	  Application.sendRegisterEmail(email);
-	  Ok(email);
-	}
+
+
+
 	def user = Action {
 		request => 
 		try {
@@ -353,6 +350,23 @@ object Gets extends Controller {
 			val tbrList = new ListBuffer[SessionDto]();
 			resultsList.foreach(x => tbrList.add(x.asInstanceOf[SessionDto]));
 			tbrList.toList;
+	}
+	def getSessionsWithFilter(filter: String, email: String, token: String, showPublic: Boolean): List[SessionDto] = {
+			val session = Application.sessionFactory.openSession();
+			val hql = "SELECT DISTINCT S FROM SessionDto S, UserDto U WHERE S.isActive = true AND (S.name LIKE :filter OR S.description LIKE :filter) AND "  + 
+					"  U.email LIKE :email AND S.userId = U.id AND ((S.userId IN " + 
+					"(select id from UserDto WHERE token = :token) OR (S.isPublic = true AND :showPublic = true)))";
+
+					val query = session.createQuery(hql);
+					query.setString("email","%" + email.trim() + "%");
+					query.setString("filter", "%" + filter + "%");
+					query.setBoolean("showPublic", showPublic);
+					query.setString(Constants.TOKEN_TEXT, token);
+					val resultsList = query.list();
+					session.close();
+					val tbrList = new ListBuffer[SessionDto]();
+					resultsList.foreach(x => tbrList.add(x.asInstanceOf[SessionDto]));
+					tbrList.toList;
 	}
 
 	def getExperiments(sessionId: Long, token: String, showPublic: Boolean): List[ExperimentDto] = {
