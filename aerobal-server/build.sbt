@@ -12,7 +12,8 @@ libraryDependencies ++= Seq(
   "com.google.code.gson"%"gson"%"2.2.4",
   "org.dbunit" % "dbunit" % "2.4.9",
   "org.hsqldb" % "hsqldb" % "2.3.2",
-  "junit" % "junit" % "3.8.2"
+  "junit" % "junit" % "3.8.2",
+  "com.sendgrid" % "sendgrid-java" % "0.2.0"
 )     
 
 play.Project.playScalaSettings

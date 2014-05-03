@@ -154,7 +154,9 @@ object Puts extends Controller {
 			val user = userOpt.getOrElse(return None);
 			if(PasswordHash.validatePassword(currentPassword, user.hash)) {
 				val newHash = PasswordHash.createHash(newPassword);
+				val newToken = Application.generateTokenString;
 				user.hash = newHash;
+				user.token = newToken;
 				val openSession = Application.sessionFactory.openSession();
 				openSession.beginTransaction();
 				val serial = openSession.update(user);
