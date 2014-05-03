@@ -210,7 +210,7 @@ object Website extends Controller{
 
         val userOp = Gets.getUser(tokenOption.get)
         val isPublic = true
-        val sessions = Gets.getSessions(userOp.get.id, tokenOption.get, isPublic )
+        val sessions = Gets.getSessions(tokenOption.get, isPublic )
 
         println(sessions);
         val querySession = sessions.filter(x => x.getName().contains(query) || x.getDescription().contains(email) ||  Gets.getUser(x.getId()).get.getEmail.contains(email));
@@ -231,7 +231,7 @@ object Website extends Controller{
         }
 
         if (sortedSessions.length == 0){
-          Ok(views.html.exclamation("No Sessions Found"))
+          Ok(views.html.exclamation("No Sessions Found"));
         }
         else{
 
@@ -260,9 +260,6 @@ object Website extends Controller{
     Ok(views.html.browse())
   }
 
-  def no_session = Action{
-    Ok(views.html.nosession())
-  }
 
 
 
