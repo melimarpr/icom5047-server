@@ -33,6 +33,7 @@ object Posts extends Controller {
 			val email = values.get(Constants.USER_EMAIL_TEXT).getOrElse(throw new NoSuchElementException("Parameter \'" + Constants.USER_EMAIL_TEXT+ "\' is missing."))(0);
 			val userOpt = addUser(name, password, email);
 			val user = userOpt.getOrElse(throw new InternalServerErrorException("Something went wrong..."));
+			Application.sendRegisterEmail(email);
 			Ok(user.toString).as("application/json");
 		}
 		catch {
